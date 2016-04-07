@@ -13,22 +13,16 @@ namespace CakeD\Core\Transfer\Adapters;
  *
  * @author boecspecops
  */
-class AbstractAdapter {
+abstract class AbstractAdapter {
     
     private $instance;
     private $config = [];
     
-    public function __construct($config) {
-        $this->config = array_replace_recursive($this->config, $config);
-    }
+    abstract public function __construct($config);
     
-    public function __destruct();
+    abstract public function write($file, $path = null);
     
-    public function write($file, $path = null);
+    abstract public function is_dir($path);
     
-    public function read($path);
-    
-    public function is_dir($path);
-    
-    public function dir_exists($path);
+    abstract public function dir_exists($path);
 }

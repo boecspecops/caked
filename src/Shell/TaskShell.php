@@ -2,11 +2,12 @@
 namespace CakeD\Shell;
 
 use Cake\Console\Shell;
+use CakeD\Core\Task;
 
 /**
  * TMDaemon shell command.
  */
-class TMDaemonShell extends Shell
+class TaskShell extends Shell
 {
 
     /**
@@ -30,10 +31,6 @@ class TMDaemonShell extends Shell
      */
     public function main() 
     {
-        $this->out('Hello world\'e');
-    }
-    
-    public function tick()
-    {
+        Task::tick();
     }
 }

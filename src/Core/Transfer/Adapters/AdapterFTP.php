@@ -23,7 +23,6 @@ class AdapterFTP extends AbstractAdapter {
             'create'        => true,
             'permissions'   => false        # false - use server's default value.
         ],
-        'throw_exc' => false,
         'rewrite'   => true,
         'method'    => FTP_BINARY,
         'ssl'       => false
@@ -31,7 +30,7 @@ class AdapterFTP extends AbstractAdapter {
     
     public function __construct($config) {
         $this->config = array_replace_recursive($this->config, $config);
-        
+                
         $conn = $this->config['connection'];
         
         if($this->config['ssl']) {
@@ -42,11 +41,11 @@ class AdapterFTP extends AbstractAdapter {
         }
         
         if($this->instance == false) {
-            throw(new AdapterException("FTP connection failed."));
+            throw(new AdapterException("[FTP] connection failed."));
         }
         
         if(!ftp_login($this->instance, $conn['login'], $conn['password'])) {
-            throw(new AdapterException("FTP authorization failed."));
+            throw(new AdapterException("[FTP] authorization failed."));
         }
         
         if(!$this->dir_exists($this->config['directory']['root']) &&
@@ -63,11 +62,7 @@ class AdapterFTP extends AbstractAdapter {
         ftp_close( $this->instance );
     }
     
-    public function write($localfile, $file_name = Null) {
-        if(!file_exists($localfile)) {
-            throw(new AdapterException("FTP file not found."));
-        }
-        
+    public function write($localfile, $file_name = Null) {        
         if($file_name === Null) {
             $file_name = basename($localfile);
         }
@@ -76,23 +71,20 @@ class AdapterFTP extends AbstractAdapter {
         
         if(in_array($file_name, $filelist) && !$this->config['rewrite'] )
         {
-            throw(new AdapterException("FTP file writing failed. File alredy exists."));
+            throw(new AdapterException("[FTP] file writing failed. File alredy exists."));
         }    
                 
         if(!ftp_put($this->instance, $file_name, $localfile, $this->config['method'])) {
-            throw(new AdapterException("FTP file writing failed."));
+            throw(new AdapterException("[FTP] file writing failed."));
         }
     }
     
     public function chmod($permissions, $path)
-    {
-        $result = ftp_chmod($this->instance, $permissions, $path);
-        
-        if($this->config['throw_exc'] && $result === false)
+    {        
+        if(!ftp_chmod($this->instance, $permissions, $path))
         {
             throw(new AdapterException("[FTP] Can't set permissions. Access denied for: ". $path));
         }
-        return $result;
     }
     
     public function is_dir($path) {
@@ -106,7 +98,7 @@ class AdapterFTP extends AbstractAdapter {
             $curr_dir = ftp_pwd($this->instance);
             if(@ftp_chdir($this->instance, $path))
             {
-                @ftp_chdir($this->instance, $path);
+                @ftp_chdir($this->instance, $curr_dir);
                 return true;
             }
         }
@@ -114,9 +106,8 @@ class AdapterFTP extends AbstractAdapter {
     }
     
     public function cd($dir) {
-        $result = @ftp_chdir($this->instance, $dir);
         
-        if($this->config['throw_exc'] && !$result)
+        if(!@ftp_chdir($this->instance, $dir))
         {
             throw(new AdapterException("[FTP] Can't change directory. Access denied for: ". $dir));
         }
@@ -129,8 +120,9 @@ class AdapterFTP extends AbstractAdapter {
         $cur_dir = ftp_pwd( $this->instance );
         foreach($parts as $part) {
             if(!$this->dir_exists($part)) {
-                $this->make_singe_directory($part);
+                $this->make_singe_directory($part);                
             }
+            $this->cd($part);
         }
         $this->cd($cur_dir);
     }
@@ -139,12 +131,11 @@ class AdapterFTP extends AbstractAdapter {
         $result = ftp_mkdir($this->instance, $dir);
         
         if($result) {
-            $this->cd($dir);
             if($this->config['directory']['permissions']) {
                 $this->chmod($this->config['directory']['permissions'], $dir);
             }
         } 
-        else if($this->config['throw_exc']) {
+        else {
             throw(new AdapterException("[FTP] Can't create directory. Access denied for: ". $dir));
         }
         

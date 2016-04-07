@@ -29,14 +29,13 @@ class TaskManagerComponent extends Component
      */
     
     public function createTask($config, $exec_time = null) {
-        if( $exec_time === null) {
-            $exec_time = new \DateTime('now');
-        } 
-        else if(is_string($exec_time)) {
+        if(is_string($exec_time)) {
             $interval = $exec_time;
             $exec_time = new \DateTime('now');
             $exec_time->add(new \DateInterval($interval));
-        }
+        } else {
+            $exec_time = new \DateTime('now');
+        } 
             
         return Task::addTask($config, $exec_time);
     }
