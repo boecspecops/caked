@@ -4,7 +4,7 @@ namespace CakeD\Core\Transfer\Adapters;
 use CakeD\Core\Exceptions\AdapterException;
 
 /**
- * Description of AdapterFTP
+ * FTP adapter provides basic functionality to communicate with FTP servers.
  *
  * @author boecspecops
  */
