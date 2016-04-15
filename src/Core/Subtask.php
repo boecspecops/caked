@@ -52,16 +52,30 @@ class Subtask {
     public static function getSubtasks($tID) {
         $query = self::getTable()->find();
         $ent_subtasks = $query->select()
-                ->where(['tID' => $tID]);
+            ->where(['tID' => $tID])
+            ->andWhere(function ($exp) {
+            return $exp
+                ->notEq('status', SubtaskStatus::COMPLETE);
+        });
         
         $subtasks = [];
         
         foreach($ent_subtasks as $subtask) {
-            $subtasks = new Subtask($subtask);
+            array_push($subtasks, new Subtask($subtask));
         }
         
         return $subtasks;
     }
+    
+    public static function count() {
+        $query = static::getTable()->find()->select();
+        return $query->where(function ($exp) {
+            return $exp->eq('status', SubtaskStatus::QUEUE);
+        })->orWhere(function ($exp) {
+            return $exp->eq('status', SubtaskStatus::TRANSFER);
+        })->count();
+    }
+    
     
     /**
      * This function adds new subtask.
@@ -117,6 +131,6 @@ class Subtask {
     
     public function setStatus($status) {
         $this->task->status = $status;
-        $this->save;
+        $this->save();
     }
 }

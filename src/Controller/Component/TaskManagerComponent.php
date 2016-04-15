@@ -2,7 +2,6 @@
 namespace CakeD\Controller\Component;
 
 use Cake\Controller\Component;
-use Cake\Controller\ComponentRegistry;
 
 use CakeD\Core\Task;
 
@@ -49,15 +48,5 @@ class TaskManagerComponent extends Component
     
     public function addfile($task, $files) {
         return $task->addfile($files);
-    }
-    
-    /**
-     * Method analyses task list.
-     * 
-     * @return type
-     */
-    
-    public function tick() {
-        return Task::tick();
     }
 }

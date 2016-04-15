@@ -7,11 +7,11 @@ namespace CakeD\Core;
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 use Cake\ORM\TableRegistry;
 use CakeD\Core\Subtask;
 use CakeD\Core\Transfer\Adapters\AdapterFTP;
 use CakeD\Core\Exceptions\AdapterException;
+use CakeD\Core\Core;
 
 /**
  * Description of Task
@@ -42,13 +42,22 @@ class Task {
      * 
      * @return type
      */    
-    public static function getTable()
-    {
+    public static function getTable() {
         if(is_null(self::$table))
         {
             self::$table = TableRegistry::get('tasks');
         }
         return self::$table;        
+    }
+    
+    
+    public static function count() {
+        $query = static::getTable()->find()->select();
+        return $query->where(function ($exp) {
+            return $exp->eq('status', TaskStatus::PROCESSING);
+        })->orWhere(function ($exp) {
+            return $exp->eq('status', TaskStatus::CONNECTING);
+        })->count();
     }
     
     
@@ -74,7 +83,9 @@ class Task {
     public static function tick() {
         $tasks = Task::getIncompletedTasks();
         foreach($tasks as $task) {
-            Task::init_and_execute($task);
+            if(self::countTasks() < Core::getConfig()['limitations']['max_tasks']) {
+                Task::init_and_execute($task);                
+            }
         }
     }
     
@@ -111,7 +122,7 @@ class Task {
             }
         }
         else {
-            $subtask = Subtask::addSubtask($this->task->tID, $files);
+            return Subtask::addSubtask($this->task->tID, $files);
         }
     }
     
@@ -124,7 +135,7 @@ class Task {
             $this->setStatus(TaskStatus::PROCESSING);
             
             foreach($this->subtasks as $subtask) {
-                $subtask->execute();
+                $subtask->execute($this->fs_adapter);
             }
 
             $this->setStatus(TaskStatus::COMPLETE);

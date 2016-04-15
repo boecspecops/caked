@@ -17,7 +17,7 @@ class AdapterFTP extends AbstractAdapter {
                 'password'  => '',
                 'port'      => 21,
                 'timeout'   => 90
-            ],
+        ],
         'directory' => [
             'root'          => '/',
             'create'        => true,
@@ -111,8 +111,6 @@ class AdapterFTP extends AbstractAdapter {
         {
             throw(new AdapterException("[FTP] Can't change directory. Access denied for: ". $dir));
         }
-        
-        return $result;
     }
     
     public function mkdir($dir) {

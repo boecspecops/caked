@@ -1,0 +1,4 @@
+## YAML Template.
+
+limitations:
+    max_tasks: 4

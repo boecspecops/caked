@@ -2,6 +2,7 @@
 namespace CakeD\Shell;
 
 use Cake\Console\Shell;
+use CakeD\Core\Core;
 use CakeD\Core\Task;
 
 /**
@@ -9,7 +10,7 @@ use CakeD\Core\Task;
  */
 class TaskShell extends Shell
 {
-
+    public $tasks = ['CakeD.Task'];
     /**
      * Manage the available sub-commands along with their arguments and help
      *
@@ -29,8 +30,17 @@ class TaskShell extends Shell
      *
      * @return bool|int Success or error code.
      */
+    
+    
     public function main() 
     {
-        Task::tick();
+        $tasks = Task::getIncompletedTasks();
+        foreach($tasks as $task) {
+            if(Task::count() < Core::getConfig()['limitations']['max_tasks']) {
+                $this->Task->main($task);
+            } else {
+                break;
+            }            
+        }
     }
 }
