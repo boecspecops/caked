@@ -27,16 +27,20 @@ class DropboxAdapter extends AbstractAdapter {
         
         $connection = $this->config;
         if($connection['token'] !== null) {
-            $this->instance = new dbx\Client($connection['token'], "PHP-Example/1.0");
+            $this->instance = new dbx\Client($connection['token'], $this->config['directory']['root']);
         } else {
             throw(new AdapterException("[Dropbox] Can't detect access token."));
         }
-        
-        
     }
     
-    public function write($file, $path = null) {
+    public function write($localfile, $file_name = Null) {        
+        if($file_name === Null) {
+            $file_name = basename($localfile);
+        }
         
+        $f = fopen($localfile, "rb");
+        $this->instance->uploadFile($file_name, Dropbox\WriteMode::add(), $f);
+        fclose($f);
     }
     
     public function is_dir($path) {
