@@ -1,7 +1,7 @@
 <?php
 
 namespace CakeD\Core\Transfer\Adapters;
-use Dropbox;
+use Dropbox as dbx;
 
 /**
  * This adapter provides basic functionality to write files on dropbox servers
@@ -25,7 +25,7 @@ class DropboxAdapter extends AbstractAdapter {
         $this->config = array_replace_recursive($this->config, $config);
         
         
-        $connection = $this->config;
+        $connection = $this->config['connection'];
         if($connection['token'] !== null) {
             $this->instance = new dbx\Client($connection['token'], $this->config['directory']['root']);
         } else {
@@ -38,8 +38,10 @@ class DropboxAdapter extends AbstractAdapter {
             $file_name = basename($localfile);
         }
         
+        $path = $this->config['directory']['root'];
+        
         $f = fopen($localfile, "rb");
-        $this->instance->uploadFile($file_name, Dropbox\WriteMode::add(), $f);
+        $this->instance->uploadFile($path . $file_name, dbx\WriteMode::add(), $f);
         fclose($f);
     }
     

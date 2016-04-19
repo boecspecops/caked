@@ -8,7 +8,7 @@ use CakeD\Core\Exceptions\AdapterException;
  *
  * @author boecspecops
  */
-class AdapterFTP extends AbstractAdapter {
+class FTPAdapter extends AbstractAdapter {
     private $instance;
     private $config = [
         'connection'=> [

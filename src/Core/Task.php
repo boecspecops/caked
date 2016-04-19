@@ -2,22 +2,12 @@
 
 namespace CakeD\Core;
 
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+
 use Cake\ORM\TableRegistry;
 use CakeD\Core\Subtask;
-use CakeD\Core\Transfer\Adapters\AdapterFTP;
+use CakeD\Core\Transfer\Adapters\AbstractAdapter;
 use CakeD\Core\Exceptions\AdapterException;
 use CakeD\Core\Core;
-
-/**
- * Description of Task
- *
- * @author boecspecops
- */
 
 class TaskStatus {
     const WAIT          = 1;
@@ -35,6 +25,9 @@ class Task {
     private $fs_adapter = null;
     private $subtasks = [];
     private $task;
+    private $def_config = [
+        "adapter" => null
+    ];
     
         
     /**
@@ -131,7 +124,7 @@ class Task {
     {
         try {
             $this->setStatus(TaskStatus::CONNECTING);
-            $this->fs_adapter = new AdapterFTP($this->read_config());
+            $this->fs_adapter = AbstractAdapter::getAdapter($this->read_config());
             $this->setStatus(TaskStatus::PROCESSING);
             
             foreach($this->subtasks as $subtask) {
@@ -165,8 +158,13 @@ class Task {
     
     private function read_config()
     {
+        
         if(file_exists($this->task->config_file)) {
-            return \Symfony\Component\Yaml\Yaml::parse( file_get_contents($this->task->config_file) );
+            $config = \Symfony\Component\Yaml\Yaml::parse( file_get_contents($this->task->config_file) );
+            
+            $this->def_config = array_replace_recursive($this->def_config, $config);
+            
+            return $this->def_config;
         } else {
             
         }        

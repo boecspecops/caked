@@ -2,21 +2,31 @@
 
 namespace CakeD\Core\Transfer\Adapters;
 
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+use CakeD\Core\Transfer\Adapters;
+use CakeD\Core\Exceptions\AdapterException;
 
-/**
- * Description of AbstractAdapter
- *
- * @author boecspecops
- */
 abstract class AbstractAdapter {
     
     private $instance;
     private $config = [];
+    
+    public final static function getAdapter($config) {
+        $config['adapter'] !== null ? $a_name = \strtoupper(\trim($config['adapter'])) : $a_name = null;
+        switch($a_name) {
+            case "FTP": {
+                return new Adapters\FTPAdapter($config);
+            }
+            case "DROPBOX": {
+                return new Adapters\DropboxAdapter($config);
+            }
+            case null: {
+                throw new AdapterException("[Task] Adapter not selected.");
+            }
+            default: {
+                throw new AdapterException("[Task] Adapter " . $a_name . " not found.");
+            }
+        }
+    }
     
     abstract public function __construct($config);
     
