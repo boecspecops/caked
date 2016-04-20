@@ -38,7 +38,7 @@ class Task {
     public static function getTable() {
         if(is_null(self::$table))
         {
-            self::$table = TableRegistry::get('tasks');
+            self::$table = TableRegistry::get('cake_d_tasks');
         }
         return self::$table;        
     }

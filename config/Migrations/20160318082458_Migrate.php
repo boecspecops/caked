@@ -12,7 +12,7 @@ class Migrate extends AbstractMigration
      */
     public function change()
     {
-        $table = $this->table('tasks', ['id' => false, 'primary_key' => ['id']]);
+        $table = $this->table('cake_d_tasks', ['id' => false, 'primary_key' => ['id']]);
         
         $table->addColumn('tID', 'integer', [
             'autoIncrement' => true,
@@ -41,7 +41,7 @@ class Migrate extends AbstractMigration
         $table->addPrimaryKey('tID');
         
         
-        $table = $this->table('subtasks', ['id' => false, 'primary_key' => ['id']]);
+        $table = $this->table('cake_d_subtasks', ['id' => false, 'primary_key' => ['id']]);
         $table->addColumn('sID', 'integer', [
             'autoIncrement' => true,
             'limit' => 25

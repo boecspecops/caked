@@ -38,7 +38,7 @@ class Subtask {
      */    
     public static function getTable() {
         if(is_null(self::$table)) {
-            self::$table = TableRegistry::get('subtasks');
+            self::$table = TableRegistry::get('cake_d_subtasks');
         }
         return self::$table;        
     }

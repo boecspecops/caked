@@ -5,7 +5,7 @@ class Initial extends AbstractMigration
 {
     public function up()
     {
-        $table = $this->table('subtasks', ['id' => false, 'primary_key' => ['sID']]);
+        $table = $this->table('cake_d_subtasks', ['id' => false, 'primary_key' => ['sID']]);
         $table
             ->addColumn('sID', 'integer', [
                 'autoIncrement' => true,
@@ -40,7 +40,7 @@ class Initial extends AbstractMigration
             ])
             ->create();
 
-        $table = $this->table('tasks', ['id' => false, 'primary_key' => ['tID']]);
+        $table = $this->table('cake_d_tasks', ['id' => false, 'primary_key' => ['tID']]);
         $table
             ->addColumn('tID', 'integer', [
                 'autoIncrement' => true,
