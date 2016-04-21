@@ -2,34 +2,19 @@
 namespace CakeD\Core\Transfer\Adapters;
 
 use CakeD\Core\Exceptions\AdapterException;
+use CakeD\Core\Transfer\Configs\FTPConfig;
 
 /**
  * FTP adapter provides basic functionality to communicate with FTP servers.
  *
  * @author boecspecops
  */
-class FTPAdapter extends AbstractAdapter {
+class FTPAdapter implements AdapterInterface {
     private $instance;
-    private $config = [
-        'connection'=> [
-                'server'    => '127.0.0.1',
-                'login'     => 'anonymous',
-                'password'  => '',
-                'port'      => 21,
-                'timeout'   => 90
-        ],
-        'directory' => [
-            'root'          => '/',
-            'create'        => true,
-            'permissions'   => false        # false - use server's default value.
-        ],
-        'rewrite'   => true,
-        'method'    => FTP_BINARY,
-        'ssl'       => false
-    ];
+    private $config = null;
     
     public function __construct($config) {
-        $this->config = array_replace_recursive($this->config, $config);
+        $this->config = new FTPConfig($config);
                 
         $conn = $this->config['connection'];
         
@@ -139,5 +124,4 @@ class FTPAdapter extends AbstractAdapter {
         
         return $result;
     }
-            
 }

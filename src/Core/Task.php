@@ -5,7 +5,7 @@ namespace CakeD\Core;
 
 use Cake\ORM\TableRegistry;
 use CakeD\Core\Subtask;
-use CakeD\Core\Transfer\Adapters\AbstractAdapter;
+use CakeD\Core\Transfer\Configs\DefaultConfig;
 use CakeD\Core\Exceptions\AdapterException;
 use CakeD\Core\Core;
 
@@ -25,9 +25,6 @@ class Task {
     private $fs_adapter = null;
     private $subtasks = [];
     private $task;
-    private $def_config = [
-        "adapter" => null
-    ];
     
         
     /**
@@ -124,19 +121,18 @@ class Task {
     {
         try {
             $this->setStatus(TaskStatus::CONNECTING);
-            $this->fs_adapter = AbstractAdapter::getAdapter($this->read_config());
+            $this->fs_adapter = DefaultConfig::getAdapter($this->task->config_file);
             $this->setStatus(TaskStatus::PROCESSING);
             
             foreach($this->subtasks as $subtask) {
                 $subtask->execute($this->fs_adapter);
             }
-
+            $this->task->error = null;
             $this->setStatus(TaskStatus::COMPLETE);
         } catch (AdapterException $e) {
             $this->task->error = $e->getMessage();
             
             $this->setStatus(TaskStatus::ERROR);
-            throw($e);
         }
         finally {
             unset($this->fs_adapter);
@@ -153,20 +149,5 @@ class Task {
     
     public function save() {
         self::getTable()->save($this->task);
-    }
-    
-    
-    private function read_config()
-    {
-        
-        if(file_exists($this->task->config_file)) {
-            $config = \Symfony\Component\Yaml\Yaml::parse( file_get_contents($this->task->config_file) );
-            
-            $this->def_config = array_replace_recursive($this->def_config, $config);
-            
-            return $this->def_config;
-        } else {
-            
-        }        
     }
 }

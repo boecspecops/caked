@@ -108,7 +108,7 @@ class Subtask {
     
     public function execute($fs_adapter) {
         if(!file_exists($this->task->file)) {
-            $this->setStatus(SubtaskStatus::NOT_EXISTS);
+            $this->setStatus(SubtaskStatus::NOT_EXIST);
         } else {
             try {
                 // Вызов метода отправки файла вставить сюда.
@@ -116,7 +116,8 @@ class Subtask {
 
                 $this->setStatus(SubtaskStatus::TRANSFER);
                 $fs_adapter->write($this->task->file);
-
+                
+                $this->task->error = null;
                 $this->setStatus(SubtaskStatus::COMPLETE);
             }
             catch(AdapterException $e) {
