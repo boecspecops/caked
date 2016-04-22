@@ -12,8 +12,9 @@ use CakeD\Core\Exceptions\ConfigException;
 
 class DefaultConfig implements \ArrayAccess{
     
-    protected $data = null;
     
+    protected $data = null;
+        
     public final static function getAdapter($config) {
         $config = self::parse($config);
         $config['adapter'] !== null ? $a_name = \strtoupper(\trim($config['adapter'])) : $a_name = null;

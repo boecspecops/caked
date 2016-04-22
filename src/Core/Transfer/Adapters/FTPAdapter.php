@@ -14,25 +14,9 @@ class FTPAdapter implements AdapterInterface {
     private $config = null;
     
     public function __construct($config) {
-        $this->config = new FTPConfig($config);
+        $this->config = new FTPConfig($config);        
+        $this->instance = $this->config->getClient();
                 
-        $conn = $this->config['connection'];
-        
-        if($this->config['ssl']) {
-            $this->instance = ftp_ssl_connect($conn['server'], $conn['port'], $conn['timeout']);
-        }
-        else {
-            $this->instance = ftp_connect($conn['server'], $conn['port'], $conn['timeout']);
-        }
-        
-        if($this->instance == false) {
-            throw(new AdapterException("[FTP] connection failed."));
-        }
-        
-        if(!ftp_login($this->instance, $conn['login'], $conn['password'])) {
-            throw(new AdapterException("[FTP] authorization failed."));
-        }
-        
         if(!$this->dir_exists($this->config['directory']['root']) &&
                 $this->config['directory']['create'])
         {

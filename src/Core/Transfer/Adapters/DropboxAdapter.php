@@ -13,24 +13,11 @@ use CakeD\Core\Transfer\Configs\DropboxConfig;
 class DropboxAdapter implements AdapterInterface {
     
     private $instance;
-    private $config = [
-        'connection' => [
-            'token' => null,
-        ],
-        'directory' => [
-            'root' => '/'
-        ]
-    ];
+    private $config = null;
     
     public function __construct($config) {
         $this->config = new DropboxConfig($config);
-        
-        $connection = $this->config['connection'];
-        if($connection['token'] !== null) {
-            $this->instance = new dbx\Client($connection['token'], $this->config['directory']['root']);
-        } else {
-            throw(new AdapterException("[Dropbox] Can't detect access token."));
-        }
+        $this->instance = $this->config->getClient();
     }
     
     public function write($localfile, $file_name = Null) {        
@@ -41,7 +28,16 @@ class DropboxAdapter implements AdapterInterface {
         $path = $this->config['directory']['root'];
         
         $f = fopen($localfile, "rb");
-        $this->instance->uploadFile($path . $file_name, dbx\WriteMode::add(), $f);
+        switch($this->config["mode"]) {
+            case "rw": {
+                $request = dbx\WriteMode::force();
+                break;
+            }
+            case "a": {
+                $request = dbx\WriteMode::add();
+            }
+        }
+        $this->instance->uploadFile($path . $file_name, $request, $f);
         fclose($f);
     }
     

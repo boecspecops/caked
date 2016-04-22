@@ -1,9 +1,11 @@
 <?php
 
 namespace CakeD\Core\Transfer\Configs;
+use CakeD\Core\Exceptions\AdapterException;
 use CakeD\Core\Transfer\Adapters\FTPAdapter;
+use CakeD\Core\Transfer\Configs\ConfigInterface;
 
-class FTPConfig extends DefaultConfig {
+class FTPConfig extends DefaultConfig implements ConfigInterface {
     
     protected $data = [
         'connection'=> [
@@ -16,11 +18,12 @@ class FTPConfig extends DefaultConfig {
         'directory' => [
             'root'          => '/',
             'create'        => true,
-            'permissions'   => false        # false - use server's default value.
+            'permissions'   => false        # false - использовать серверные настройки.
         ],
-        'rewrite'   => true,
-        'method'    => FTP_BINARY,
-        'ssl'       => false
+        'mode'      => 'rw',                # rw - переписать файл, если существует.
+                                            # любой другой файл будет вызывать проверку на его существование.
+        'method'    => FTP_BINARY,          # FTP_BINARY/FTP_ASCII
+        'ssl'       => false                # Использовать ssl?
     ];
     
     public static function invokeAdapter($config) {
@@ -36,9 +39,41 @@ class FTPConfig extends DefaultConfig {
         }
     }
     
+    public function getClient() {
+        $conn = $this->data['connection'];
+        
+        if($this->data['ssl']) {
+            $client = ftp_ssl_connect($conn['server'], $conn['port'], $conn['timeout']);
+        }
+        else {
+            $client  = ftp_connect($conn['server'], $conn['port'], $conn['timeout']);
+        }
+        
+        if($client == false) {
+            throw(new AdapterException("[FTP] connection failed."));
+        }
+        
+        if(!ftp_login($client, $conn['login'], $conn['password'])) {
+            throw(new AdapterException("[FTP] authorization failed."));
+        }
+        
+        return $client;
+    }
+    
     public function getUrlBase() {
-        $url = "ftp://" . $this->data["connection"]["server"];
-        $url.= $this->data["directory"]["root"] . "/";
+        $client = $this->getClient();
+        ftp_chdir($client, $this->data["directory"]["root"]);
+        
+        if($this->data["ssl"]) {
+            $url = "ftps://";
+        } else {
+            $url = "ftp://";
+        }
+        
+        $url .= $this->data["connection"]["server"] . ftp_pwd($client). "/";
+        
+        #$url = "ftp://" . $this->data["connection"]["server"];
+        #$url.= $this->data["directory"]["root"] . "/";
         return $url;
     }
 }
