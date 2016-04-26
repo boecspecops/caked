@@ -60,7 +60,7 @@ class FTPConfig extends DefaultConfig implements ConfigInterface {
         return $client;
     }
     
-    public function getUrlBase() {
+    public function getUrlBase($filename = "") {
         $client = $this->getClient();
         ftp_chdir($client, $this->data["directory"]["root"]);
         
@@ -70,10 +70,9 @@ class FTPConfig extends DefaultConfig implements ConfigInterface {
             $url = "ftp://";
         }
         
-        $url .= $this->data["connection"]["server"] . ftp_pwd($client). "/";
+        $url .= $this->data["connection"]["server"] . "/" .
+                $this->data["directory"]["root"] . "/" .  $filename;
         
-        #$url = "ftp://" . $this->data["connection"]["server"];
-        #$url.= $this->data["directory"]["root"] . "/";
         return $url;
     }
 }

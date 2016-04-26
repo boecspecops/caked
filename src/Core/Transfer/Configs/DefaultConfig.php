@@ -14,6 +14,19 @@ class DefaultConfig implements \ArrayAccess{
     
     
     protected $data = null;
+    
+    protected static function parse($config) {
+        return Yaml::parse( file_get_contents($config) );
+    }
+    
+    protected function __construct($config) {
+        if(is_string($config)) {
+            $config = self::parse($config);
+        } 
+        if(is_array($config)) {
+            $this->config = $config;
+        }
+    }
         
     public final static function getAdapter($config) {
         $config = self::parse($config);
@@ -34,16 +47,22 @@ class DefaultConfig implements \ArrayAccess{
         }
     }
     
-    public static function parse($config) {
-        return Yaml::parse( file_get_contents($config) );
-    }
-    
-    public function __construct($config) {
-        if(is_string($config)) {
-            $config = self::parse($config);
-        } 
-        if(is_array($config)) {
-            $this->config = $config;
+    public final static function parseConfig($config) {
+        $config = self::parse($config);
+        $config['adapter'] !== null ? $a_name = \strtoupper(\trim($config['adapter'])) : $a_name = null;
+        switch($a_name) {
+            case "FTP": {
+                return new FTPConfig($config);
+            }
+            case "DROPBOX": {
+                return new DropboxConfig($config);
+            }
+            case null: {
+                throw new ConfigException("[Config] Adapter not selected.");
+            }
+            default: {
+                throw new ConfigException("[Config] Adapter " . $a_name . " not found.");
+            }
         }
     }
     

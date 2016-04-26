@@ -8,6 +8,7 @@
 
 namespace CakeD\Core;
 use Cake\ORM\TableRegistry;
+use CakeD\Core\Transfer\Configs\DefaultConfig;
 
 /**
  * Description of Subtask

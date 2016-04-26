@@ -43,7 +43,15 @@ class DropboxConfig extends DefaultConfig implements ConfigInterface {
         return $client;
     }
     
-    public function getUrlBase() {
-        
+    public function getUrlBase($filename = "") {
+        try {
+            $file = $this->config["directory"]["root"] . $filename;
+            $client = $this->getClient();
+            $url = $client->createShareableLink($file);
+            $url = str_replace("dl=0", "dl=1", $url);
+        } catch(Dropbox\Exception_ServerError $e) {
+            
+        }
+        return $url;
     }
 }
