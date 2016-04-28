@@ -11,8 +11,6 @@ use CakeD\Core\Exceptions\ConfigException;
  */
 
 class DefaultConfig implements \ArrayAccess{
-    
-    
     protected $data = null;
     
     protected static function parse($config) {

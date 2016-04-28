@@ -35,6 +35,7 @@ class DropboxAdapter implements AdapterInterface {
             }
             case "a": {
                 $request = dbx\WriteMode::add();
+                break;
             }
         }
         $this->instance->uploadFile($path . $file_name, $request, $f);

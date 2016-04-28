@@ -2,6 +2,7 @@
 
 namespace CakeD\Core\Transfer\Configs;
 use Dropbox as dbx;
+use CakeD\Core\Exceptions;
 use CakeD\Core\Exceptions\AdapterException;
 use CakeD\Core\Transfer\Adapters\DropboxAdapter;
 use CakeD\Core\Transfer\Configs\ConfigInterface;
@@ -37,7 +38,7 @@ class DropboxConfig extends DefaultConfig implements ConfigInterface {
         if($connection['token'] !== null) {
             $client = new dbx\Client($connection['token'], $this->config['directory']['root']);
         } else {
-            throw(new AdapterException("[Dropbox] Can't detect access token."));
+            throw(new Exceptions\ConfigParamNotFound(["param" => ["connection" => "token"]]));
         }
         
         return $client;
@@ -50,7 +51,7 @@ class DropboxConfig extends DefaultConfig implements ConfigInterface {
             $url = $client->createShareableLink($file);
             $url = str_replace("dl=0", "dl=1", $url);
         } catch(Dropbox\Exception_ServerError $e) {
-            
+            throw(new Exceptions\RemoteException(["exception"=>$e]));
         }
         return $url;
     }

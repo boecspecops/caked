@@ -8,8 +8,11 @@
 
 namespace CakeD\Core\Exceptions;
 
-use Cake\Core\Exception\Exception;
-
-class ConfigException extends Exception{    
-    protected $_messageTemplate = 'Seems that %s is missing.';
+/**
+ * Description of ConfigParamNotFound
+ *
+ * @author boecspecops
+ */
+class ConfigParamNotFound {
+    //put your code here
 }

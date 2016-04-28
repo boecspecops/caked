@@ -1,7 +1,7 @@
 <?php
 
 namespace CakeD\Core\Transfer\Configs;
-use CakeD\Core\Exceptions\AdapterException;
+use CakeD\Core\Exceptions;
 use CakeD\Core\Transfer\Adapters\FTPAdapter;
 use CakeD\Core\Transfer\Configs\ConfigInterface;
 
@@ -50,11 +50,11 @@ class FTPConfig extends DefaultConfig implements ConfigInterface {
         }
         
         if($client == false) {
-            throw(new AdapterException("[FTP] connection failed."));
+            throw(new Exceptions\ConnectionReset("Can't connect to server."));
         }
         
         if(!ftp_login($client, $conn['login'], $conn['password'])) {
-            throw(new AdapterException("[FTP] authorization failed."));
+            throw(new Exceptions\RemoteAuthFailed(["adapter" => "FTP"]));
         }
         
         return $client;

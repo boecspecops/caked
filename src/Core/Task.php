@@ -7,6 +7,7 @@ use Cake\ORM\TableRegistry;
 use CakeD\Core\Subtask;
 use CakeD\Core\Transfer\Configs\DefaultConfig;
 use CakeD\Core\Exceptions\AdapterException;
+use CakeD\Core\Exceptions;
 use CakeD\Core\Core;
 
 class TaskStatus {
@@ -125,15 +126,29 @@ class Task {
             $this->setStatus(TaskStatus::PROCESSING);
             
             foreach($this->subtasks as $subtask) {
-                $subtask->execute($this->fs_adapter);
+                try {
+                    $subtask->execute($this->fs_adapter);                    
+                } catch (Exceptions\FileNotFound $e) {
+                    $subtask->setStatus(SubtaskStatus::NOT_EXIST);
+                }
             }
             $this->task->error = null;
             $this->setStatus(TaskStatus::COMPLETE);
-        } catch (AdapterException $e) {
+        } catch (Exceptions\RemoteAuthFailed $e) {
+            $this->task->error = $e->getMessage();
+            
+            $this->setStatus(TaskStatus::ERROR);
+        } catch(Exceptions\RemoteException $e) {
+            $this->task->error = $e->getMessage();
+            
+            $this->setStatus(TaskStatus::ERROR);
+            throw($e);
+        } catch(Exceptions\ConnectionReset $e) {
             $this->task->error = $e->getMessage();
             
             $this->setStatus(TaskStatus::ERROR);
         }
+        
         finally {
             unset($this->fs_adapter);
         }

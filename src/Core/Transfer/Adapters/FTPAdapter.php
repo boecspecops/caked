@@ -2,6 +2,7 @@
 namespace CakeD\Core\Transfer\Adapters;
 
 use CakeD\Core\Exceptions\AdapterException;
+use CakeD\Core\Exceptions;
 use CakeD\Core\Transfer\Configs\FTPConfig;
 
 /**
@@ -38,13 +39,13 @@ class FTPAdapter implements AdapterInterface {
         
         $filelist = ftp_nlist($this->instance, './');
         
-        if(in_array($file_name, $filelist) && !$this->config['rewrite'] )
+        if(in_array($file_name, $filelist) && !$this->config['rw'] )
         {
-            throw(new AdapterException("[FTP] file writing failed. File alredy exists."));
+            throw(new Exceptions\RemoteException("[FTP] file writing failed. File alredy exists."));
         }    
                 
         if(!ftp_put($this->instance, $file_name, $localfile, $this->config['method'])) {
-            throw(new AdapterException("[FTP] file writing failed."));
+            throw(new Exceptions\RemoteException("[FTP] Write file failed. Permission denied."));
         }
     }
     
@@ -52,7 +53,7 @@ class FTPAdapter implements AdapterInterface {
     {        
         if(!ftp_chmod($this->instance, $permissions, $path))
         {
-            throw(new AdapterException("[FTP] Can't set permissions. Access denied for: ". $path));
+            throw(new Exceptions\RemoteException("[FTP] Can't set permissions. Access denied for: ". $path));
         }
     }
     
@@ -78,7 +79,7 @@ class FTPAdapter implements AdapterInterface {
         
         if(!@ftp_chdir($this->instance, $dir))
         {
-            throw(new AdapterException("[FTP] Can't change directory. Access denied for: ". $dir));
+            throw(new Exceptions\RemoteException("[FTP] Can't change directory. Access denied for: ". $dir));
         }
     }
     
@@ -103,7 +104,7 @@ class FTPAdapter implements AdapterInterface {
             }
         } 
         else {
-            throw(new AdapterException("[FTP] Can't create directory. Access denied for: ". $dir));
+            throw(new Exceptions\RemoteException("[FTP] Can't create directory. Access denied for: ". $dir));
         }
         
         return $result;

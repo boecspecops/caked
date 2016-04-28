@@ -9,6 +9,7 @@
 namespace CakeD\Core;
 use Cake\ORM\TableRegistry;
 use CakeD\Core\Transfer\Configs\DefaultConfig;
+use CakeD\Core\Exceptions;
 
 /**
  * Description of Subtask
@@ -104,15 +105,13 @@ class Subtask {
      * This function sends file to server.
      * 
      * @param type $fs_adapter
-     * @throws AdapterException
      */
     
     public function execute($fs_adapter) {
         if(!file_exists($this->task->file)) {
-            $this->setStatus(SubtaskStatus::NOT_EXIST);
+            throw(new Exceptions\FileNotFound(["file" => $this->task->file]));
         } else {
             try {
-                // Вызов метода отправки файла вставить сюда.
                 $this->setStatus(SubtaskStatus::QUEUE);
 
                 $this->setStatus(SubtaskStatus::TRANSFER);
@@ -121,7 +120,11 @@ class Subtask {
                 $this->task->error = null;
                 $this->setStatus(SubtaskStatus::COMPLETE);
             }
-            catch(AdapterException $e) {
+            catch(Exceptions\RemoteException $e) {
+                $this->task->error = $e->getMessage();
+                $this->setStatus(SubtaskStatus::ERROR);
+            }
+            catch(Exceptions\ConnectionReset $e) {
                 $this->task->error = $e->getMessage();
                 $this->setStatus(SubtaskStatus::ERROR);
             }
