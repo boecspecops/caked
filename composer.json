@@ -1,5 +1,5 @@
 {
-    "name": "boecspecops/caked",
+    "name": "BoecSpecOPs/CakeD",
     "authors": {
         "name": "Denis Volzhankin",
         "email": "boecspecops@mail.ru",
@@ -14,16 +14,11 @@
     },
     "autoload": {
         "psr-4": {
-            "CakeD\\": "src"
+            "CakeD\\": "./plugins/CakeD/src"
         }
     },
     "scripts": {
         "post-update-cmd": "CakeD\\Core::postUpdate",
         "post-install-cmd": "CakeD\\Core::postInstall"
-    },
-    "autoload": {
-        "psr-4": {
-            "BoecSpecOPs\\CakeD\\": "./plugins/CakeD/src"
-        }
     }
 }
