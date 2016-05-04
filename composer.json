@@ -20,5 +20,10 @@
     "scripts": {
         "post-update-cmd": "CakeD\\Core::postUpdate",
         "post-install-cmd": "CakeD\\Core::postInstall"
+    },
+    "autoload": {
+        "psr-4": {
+            "BoecSpecOPs\\CakeD\\": "./plugins/CakeD/src"
+        }
     }
 }
