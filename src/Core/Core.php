@@ -6,11 +6,6 @@ use Migrations\Migrations;
 use Composer\Script\Event;
 
 class Core {
-    private static $config = [
-        'limitations' => [
-            'max_tasks' => 4
-        ]
-    ];
     
     public static function postUpdate(Event $event) {
         $composer = $event->getComposer();
@@ -26,11 +21,5 @@ class Core {
         echo "[CakeD] Migrating...";
         $migrations = new Migrations(["plugin" => "CakeD"]);
         $migrations->migrate();
-    }
-    
-    public static function getConfig() {
-        $config = [];
-        self::$config = array_replace_recursive(self::$config, $config);
-        return self::$config;
     }
 }
