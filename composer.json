@@ -18,7 +18,7 @@
         }
     },
     "scripts": {
-        "post-update-cmd": "CakeD\\Core::postUpdate",
-        "post-install-cmd": "CakeD\\Core::postInstall"
+        "post-update-cmd": "CakeD\\Core\\Core::postUpdate",
+        "post-install-cmd": "CakeD\\Core\\Core::postInstall"
     }
 }
