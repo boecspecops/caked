@@ -14,7 +14,7 @@
     },
     "autoload": {
         "psr-4": {
-            "CakeD\\": "vendor/CakeD/src"
+            "CakeD\\": "src"
         }
     },
     "scripts": {
