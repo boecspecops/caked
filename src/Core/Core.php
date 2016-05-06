@@ -17,7 +17,7 @@ class Core {
         self::migrate();
     }
     
-    private static function migrate() {
+    public static function migrate() {
         echo "[CakeD] Migrating...";
         $migrations = new Migrations(["plugin" => "CakeD"]);
         $migrations->migrate();

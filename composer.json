@@ -18,6 +18,6 @@
         }
     },
     "scripts": {
-        "init": "CakeD\\Core\\Core::postUpdate"
+        "init": "CakeD\\Core\\Core::migrate"
     }
 }
