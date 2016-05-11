@@ -7,6 +7,14 @@ use Composer\Script\Event;
 
 class Core {
     
+    public static function getConfig() {
+        return array(
+            "limitations" => [
+                "max_tasks" => 5
+            ]
+        );
+    }
+    
     public static function postUpdate(Event $event) {
         $composer = $event->getComposer();
         self::migrate();
