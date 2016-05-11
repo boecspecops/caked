@@ -17,7 +17,7 @@ class Core {
         self::migrate();
     }
     
-    public static function migrate() {
+    public static function migrate(Event $event) {
         $event->getComposer();
         $event->getIO()->write("Потому что это чёртов БЕЕЕЙНБЛЕЕЙД!!1");
     }
