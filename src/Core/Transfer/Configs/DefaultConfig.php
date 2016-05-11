@@ -2,7 +2,7 @@
 
 namespace CakeD\Core\Transfer\Configs;
 use Symfony\Component\Yaml\Yaml;
-use CakeD\Core\Exceptions\ConfigException;
+use \CakeD\Core\Exceptions;
 
 /**
  * Классы конфигураций упрощают хранение/изменение настроек поумолчанию,
@@ -37,10 +37,10 @@ class DefaultConfig implements \ArrayAccess{
                 return DropboxConfig::invokeAdapter($config);
             }
             case null: {
-                throw new ConfigParamNotFound("[Config] Adapter not selected.");
+                throw new Exceptions\ConfigParamNotFound("[Config] Adapter not selected.");
             }
             default: {
-                throw new ConfigParamNotFound("[Config] Adapter " . $a_name . " not found.");
+                throw new Exceptions\ConfigParamNotFound("[Config] Adapter " . $a_name . " not found.");
             }
         }
     }
@@ -56,10 +56,10 @@ class DefaultConfig implements \ArrayAccess{
                 return new DropboxConfig($config);
             }
             case null: {
-                throw new ConfigException("[Config] Adapter not selected.");
+                throw new Exceptions\ConfigParamNotFound("[Config] Adapter not selected.");
             }
             default: {
-                throw new ConfigException("[Config] Adapter " . $a_name . " not found.");
+                throw new Exceptions\ConfigParamNotFound("[Config] Adapter " . $a_name . " not found.");
             }
         }
     }
