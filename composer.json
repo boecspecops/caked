@@ -21,7 +21,6 @@
         "post-update-cmd":[
             "CakeD\\Core\\Core::migrate"
         ],
-        
         "post-install-cmd":[
             "CakeD\\Core\\Core::migrate"
         ]
