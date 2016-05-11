@@ -37,10 +37,10 @@ class DefaultConfig implements \ArrayAccess{
                 return DropboxConfig::invokeAdapter($config);
             }
             case null: {
-                throw new ConfigException("[Config] Adapter not selected.");
+                throw new ConfigParamNotFound("[Config] Adapter not selected.");
             }
             default: {
-                throw new ConfigException("[Config] Adapter " . $a_name . " not found.");
+                throw new ConfigParamNotFound("[Config] Adapter " . $a_name . " not found.");
             }
         }
     }
