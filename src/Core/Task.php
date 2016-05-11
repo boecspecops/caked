@@ -106,10 +106,10 @@ class Task {
     }
     
     
-    public function addSubtask($files) {
+    public function addfile($files) {
         if(is_array($files)) {
             foreach($files as $file) {
-                $this->addSubtask($file);
+                $this->addfile($file);
             }
         }
         else {
