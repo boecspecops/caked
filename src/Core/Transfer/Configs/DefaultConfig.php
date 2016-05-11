@@ -14,6 +14,9 @@ class DefaultConfig implements \ArrayAccess{
     protected $data = null;
     
     protected static function parse($config) {
+        if(!file_exists($config)) {
+            throw(new Exceptions\FileNotFound("[Config] File not found: " . $config));
+        }
         return Yaml::parse( file_get_contents($config) );
     }
     

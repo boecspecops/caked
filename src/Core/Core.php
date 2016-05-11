@@ -14,19 +14,4 @@ class Core {
             ]
         );
     }
-    
-    public static function postUpdate(Event $event) {
-        $composer = $event->getComposer();
-        self::migrate();
-    }
-    
-    public static function postInstall(Event $event) {
-        $composer = $event->getComposer();
-        self::migrate();
-    }
-    
-    public static function migrate(Event $event) {
-        $event->getComposer();
-        $event->getIO()->write("Потому что это чёртов БЕЕЕЙНБЛЕЕЙД!!1");
-    }
 }
