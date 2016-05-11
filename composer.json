@@ -1,0 +1,25 @@
+{
+    "name": "CakeD",
+    "authors": {
+        "name": "Denis Volzhankin",
+        "email": "boecspecops@mail.ru",
+        "role": "Developer"
+    },
+    "version": "0.3",
+    "homepage": "https://github.com/boecspecops/caked",
+    "description": "CakeD plugin for CakePHP",
+    "type": "cakephp-plugin",
+    "require": {
+        "dropbox/dropbox-sdk": "1.1.*"
+    },
+    "autoload": {
+        "psr-4": {
+            "CakeD\\": "src"
+        }
+    },
+    "scripts": {
+        "post-update-cmd": "CakeD\\Core\\Core::postUpdate",
+        "post-install-cmd": "CakeD\\Core\\Core::postInstall"
+    }
+}
+
