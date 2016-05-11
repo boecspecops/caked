@@ -1,4 +1,4 @@
-{
+    {
     "name": "CakeD",
     "authors": {
         "name": "Denis Volzhankin",
@@ -17,12 +17,9 @@
             "CakeD\\": "src"
         }
     },
-    "scripts": {
-        "init": "CakeD\\Core\\Core::migrate",
-        "post-package-install": "CakeD\\Core\\Core::migrate",
-        "post-package-update": "CakeD\\Core\\Core::migrate",
-        "post-autoload-dump": "CakeD\\Core\\Core::migrate",
-        "post-update-cmd": "CakeD\\Core\\Core::migrate",
-        "post-install-cmd": "CakeD\\Core\\Core::migrate"
+    "scripts":{
+        "post-package-update":[
+            "CakeD\\Core\\Core::migrate"
+        ]
     }
 }

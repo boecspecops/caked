@@ -18,8 +18,7 @@ class Core {
     }
     
     public static function migrate() {
-        echo "[CakeD] Migrating...";
-        $migrations = new Migrations(["plugin" => "CakeD"]);
-        $migrations->migrate();
+        $event->getComposer();
+        $event->getIO()->write("Потому что это чёртов БЕЕЕЙНБЛЕЕЙД!!1");
     }
 }
