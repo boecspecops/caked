@@ -147,6 +147,10 @@ class Task {
             $this->task->error = $e->getMessage();
             
             $this->setStatus(TaskStatus::ERROR);
+        } catch(Exceptions\FileNotFound $e) {
+            $this->task->error = $e->getMessage();
+            
+            $this->setStatus(TaskStatus::ERROR);
         }
         
         finally {
