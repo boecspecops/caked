@@ -126,9 +126,7 @@ class Task {
             $this->setStatus(TaskStatus::PROCESSING);
             
             foreach($this->subtasks as $subtask) {
-                if(!$subtask->execute($this->fs_adapter)) {
-                    $task_exec_status = false;
-                }
+                $subtask->execute($this->fs_adapter) ? : $task_exec_status = false;
             }
         
             if($task_exec_status) {
