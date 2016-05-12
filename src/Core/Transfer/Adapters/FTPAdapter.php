@@ -1,7 +1,6 @@
 <?php
 namespace CakeD\Core\Transfer\Adapters;
 
-use CakeD\Core\Exceptions\AdapterException;
 use CakeD\Core\Exceptions;
 use CakeD\Core\Transfer\Configs\FTPConfig;
 

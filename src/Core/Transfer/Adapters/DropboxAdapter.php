@@ -3,6 +3,7 @@
 namespace CakeD\Core\Transfer\Adapters;
 use Dropbox as dbx;
 use CakeD\Core\Transfer\Configs\DropboxConfig;
+use CakeD\Core\Exceptions;
 
 /**
  * This adapter provides basic functionality to write files on dropbox servers
@@ -38,8 +39,15 @@ class DropboxAdapter implements AdapterInterface {
                 break;
             }
         }
-        $this->instance->uploadFile($path . $file_name, $request, $f);
-        fclose($f);
+        try{
+            $this->instance->uploadFile($path . $file_name, $request, $f);
+        }
+        catch(Dropbox\Exception_NetworkIO $e) {
+            throw(new Exceptions\ConnectionReset($e->getMessage()));
+        } 
+        finally {
+            fclose($f);
+        }
     }
     
     public function is_dir($path) {
