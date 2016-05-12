@@ -125,12 +125,11 @@ class Subtask {
             catch(Exceptions\RemoteException $e) {
                 $this->task->error = $e->getMessage();
                 $this->setStatus(SubtaskStatus::ERROR);
+                return false;
             }
             catch(Exceptions\ConnectionReset $e) {
                 $this->task->error = $e->getMessage();
                 $this->setStatus(SubtaskStatus::ERROR);
-            }
-            finally {
                 return false;
             }
         }
