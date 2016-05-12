@@ -120,18 +120,17 @@ class Task {
     
     public function execute()
     {
+        $task_exec_status = true;
         try {
             $this->setStatus(TaskStatus::CONNECTING);
             $this->fs_adapter = DefaultConfig::getAdapter($this->task->config_file);
             $this->setStatus(TaskStatus::PROCESSING);
             
+            
             foreach($this->subtasks as $subtask) {
-                try {
-                    $subtask->execute($this->fs_adapter);                    
-                } catch (Exceptions\FileNotFound $e) {
-                    $subtask->setStatus(SubtaskStatus::NOT_EXIST);
-                }
+                $subtask->execute($this->fs_adapter)?:$task_exec_status = false;
             }
+            
             $this->task->error = null;
             $this->setStatus(TaskStatus::COMPLETE);
         } catch (Exceptions\RemoteAuthFailed $e) {
@@ -142,19 +141,19 @@ class Task {
             $this->task->error = $e->getMessage();
             
             $this->setStatus(TaskStatus::ERROR);
-            throw($e);
-        } catch(Exceptions\ConnectionReset $e) {
-            $this->task->error = $e->getMessage();
-            
-            $this->setStatus(TaskStatus::ERROR);
-        } catch(Exceptions\FileNotFound $e) {
+        } catch(Exceptions\FileNotFound $e) {       // Config file not found
             $this->task->error = $e->getMessage();
             
             $this->setStatus(TaskStatus::ERROR);
         }
-        
         finally {
             unset($this->fs_adapter);
+        }
+        
+        if(!$task_exec_status) {
+            $this->task->error = "[Task] Transfer completed with problems.";
+            
+            $this->setStatus(TaskStatus::ERROR);
         }
     }
     

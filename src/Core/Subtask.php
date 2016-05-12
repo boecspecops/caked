@@ -108,17 +108,19 @@ class Subtask {
      */
     
     public function execute($fs_adapter) {
+        $this->setStatus(SubtaskStatus::QUEUE);
+        
         if(!file_exists($this->task->file)) {
-            throw(new Exceptions\FileNotFound(["file" => $this->task->file]));
+            $this->setStatus(SubtaskStatus::NOT_EXIST);
+            return false;
         } else {
             try {
-                $this->setStatus(SubtaskStatus::QUEUE);
-
                 $this->setStatus(SubtaskStatus::TRANSFER);
                 $fs_adapter->write($this->task->file);
                 
                 $this->task->error = null;
                 $this->setStatus(SubtaskStatus::COMPLETE);
+                return true;
             }
             catch(Exceptions\RemoteException $e) {
                 $this->task->error = $e->getMessage();
@@ -127,6 +129,9 @@ class Subtask {
             catch(Exceptions\ConnectionReset $e) {
                 $this->task->error = $e->getMessage();
                 $this->setStatus(SubtaskStatus::ERROR);
+            }
+            finally {
+                return false;
             }
         }
     }    
