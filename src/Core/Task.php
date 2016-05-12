@@ -6,7 +6,6 @@ namespace CakeD\Core;
 use Cake\ORM\TableRegistry;
 use CakeD\Core\Subtask;
 use CakeD\Core\Transfer\Configs\DefaultConfig;
-use CakeD\Core\Exceptions\AdapterException;
 use CakeD\Core\Exceptions;
 use CakeD\Core\Core;
 
@@ -126,34 +125,33 @@ class Task {
             $this->fs_adapter = DefaultConfig::getAdapter($this->task->config_file);
             $this->setStatus(TaskStatus::PROCESSING);
             
-            
             foreach($this->subtasks as $subtask) {
-                $subtask->execute($this->fs_adapter)?:$task_exec_status = false;
+                if(!$subtask->execute($this->fs_adapter)) {
+                    $task_exec_status = false;
+                }
             }
-            
-            $this->task->error = null;
-            $this->setStatus(TaskStatus::COMPLETE);
+        
+            if($task_exec_status) {
+                $this->task->error = null;
+                $this->setStatus(TaskStatus::COMPLETE);
+            } else {
+                $this->task->error = "[Task] Transfer completed with problems.";
+                $this->setStatus(TaskStatus::ERROR);
+            }
         } catch (Exceptions\RemoteAuthFailed $e) {
             $this->task->error = $e->getMessage();
-            
             $this->setStatus(TaskStatus::ERROR);
-        } catch(Exceptions\RemoteException $e) {
+        } 
+        catch(Exceptions\RemoteException $e) {
             $this->task->error = $e->getMessage();
-            
             $this->setStatus(TaskStatus::ERROR);
-        } catch(Exceptions\FileNotFound $e) {       // Config file not found
-            $this->task->error = $e->getMessage();
-            
+        } 
+        catch(Exceptions\FileNotFound $e) {       // Config file not found
+            $this->task->error = $e->getMessage();    
             $this->setStatus(TaskStatus::ERROR);
         }
         finally {
             unset($this->fs_adapter);
-        }
-        
-        if(!$task_exec_status) {
-            $this->task->error = "[Task] Transfer completed with problems.";
-            
-            $this->setStatus(TaskStatus::ERROR);
         }
     }
     
