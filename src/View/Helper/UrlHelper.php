@@ -30,6 +30,8 @@ class UrlHelper extends Helper
         
         UrlHelper::$config["helper"] = $options;
         var_dump(UrlHelper::$config["helper"]);
+        UrlHelper::$config["helper"] = "dfgljsdfj";
+        var_dump(UrlHelper::$config["helper"]);
     }
     
     /**
