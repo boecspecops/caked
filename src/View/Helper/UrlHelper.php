@@ -29,11 +29,11 @@ class UrlHelper extends Helper
         $this->config = DefaultConfig::parseConfig($config);
         
         if(!key_exists("prefix", $this->config)) {
-            $this->$config["prefix"] = "";
+            $this->config["prefix"] = "";
         }
         
         if($prefix !== null) {
-            $this->$config["prefix"] = $prefix;
+            $this->config["prefix"] = $prefix;
         }
     }
     
