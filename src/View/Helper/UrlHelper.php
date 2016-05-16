@@ -126,7 +126,7 @@ class UrlHelper extends Helper
      */
     public function assetUrl($path, array $options = [])
     {
-        $options = array_replace($this->config["helper"], $options);
+        $options = array_merge($this->config["helper"], $options);
         
         if (is_array($path)) {
             return $this->build($path, !empty($options['fullBase']));
