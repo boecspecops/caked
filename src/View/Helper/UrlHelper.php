@@ -25,8 +25,16 @@ class UrlHelper extends Helper
         return "";
     }
     
-    public function setConfig($config) {
+    public function setConfig($config, $prefix = null) {
         $this->config = DefaultConfig::parseConfig($config);
+        
+        if(!key_exists("prefix", $config)) {
+            $this->$config["prefix"] = "";
+        }
+        
+        if($prefix !== null) {
+            $this->$config["prefix"] = $prefix;
+        }
     }
     
     /**
