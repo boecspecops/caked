@@ -14,7 +14,9 @@ class DefaultConfig implements \ArrayAccess{
     protected $data = null;
     
     protected static function parse($config) {
-        if(!file_exists($config)) {
+        if(is_array($config)) {
+            return $config;
+        } elseif(!file_exists($config)) {
             throw(new Exceptions\FileNotFound("[Config] File not found: " . $config));
         }
         return Yaml::parse( file_get_contents($config) );
@@ -70,8 +72,14 @@ class DefaultConfig implements \ArrayAccess{
     public function set(array $config) {
         $this->data = array_replace_recursive($this->data, $config);
     }
+    
+    public function as_array() {
+        return is_array($this->data) ? $this->data : [];
+    }
 
-    public function offsetSet($offset, $value) {}
+    public function offsetSet($offset, $value) {
+        $this->data[$offset] = $value;
+    }
     
     public function offsetExists($offset) {
         return isset($this->data[$offset]);

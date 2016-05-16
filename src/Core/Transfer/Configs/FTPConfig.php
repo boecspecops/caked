@@ -61,18 +61,7 @@ class FTPConfig extends DefaultConfig implements ConfigInterface {
     }
     
     public function getUrlBase($filename = "") {
-        $client = $this->getClient();
-        ftp_chdir($client, $this->data["directory"]["root"]);
         
-        if($this->data["ssl"]) {
-            $url = "ftps://";
-        } else {
-            $url = "ftp://";
-        }
-        
-        $url .= $this->data["connection"]["server"] . "/" .
-                $this->data["directory"]["root"] . "/" .  $filename;
-        
-        return $url;
+        return $filename;
     }
 }
