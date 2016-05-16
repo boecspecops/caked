@@ -16,7 +16,7 @@ use Cake\View\Helper;
  */
 class UrlHelper extends Helper
 {
-    private static $config;
+    private static $config = [];
     
     private function getUrlBase($filename = "") {
         if(isset($this->config)) {
@@ -29,6 +29,7 @@ class UrlHelper extends Helper
         self::$config = DefaultConfig::parseConfig($config);
         
         self::$config["helper"] = $options;
+        var_dump(self::$config);
     }
     
     /**
