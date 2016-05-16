@@ -28,6 +28,8 @@ class UrlHelper extends Helper
     public function setConfig($config, $options = []) {
         self::$config = DefaultConfig::parseConfig($config)->as_array();
         
+        var_dump(self::$config);
+        
         self::$config['helper'] = 'options';
     }
     
