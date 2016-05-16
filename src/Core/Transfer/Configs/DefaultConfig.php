@@ -74,7 +74,7 @@ class DefaultConfig implements \ArrayAccess{
     }
     
     public function as_array() {
-        return is_array($this->data()) ? $this->data() : [];
+        return is_array($this->data) ? $this->data : [];
     }
 
     public function offsetSet($offset, $value) {}
