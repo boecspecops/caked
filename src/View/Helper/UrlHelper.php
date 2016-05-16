@@ -32,10 +32,6 @@ class UrlHelper extends Helper
             $this->config["prefix"] = "";
         }
         
-        if($prefix !== null) {
-            $this->config["prefix"] = $prefix;
-        }
-        
         $this->config["helper"] = $options;
     }
     
@@ -130,7 +126,7 @@ class UrlHelper extends Helper
      */
     public function assetUrl($path, array $options = [])
     {
-        $options = array_replace($this->config, $options);
+        $options = array_replace($this->config["helper"], $options);
         
         if (is_array($path)) {
             return $this->build($path, !empty($options['fullBase']));
