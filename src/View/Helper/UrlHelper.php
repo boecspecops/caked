@@ -26,12 +26,9 @@ class UrlHelper extends Helper
     }
     
     public function setConfig($config, $options = []) {
-        UrlHelper::$config = DefaultConfig::parseConfig($config);
+        self::$config = DefaultConfig::parseConfig($config);
         
-        UrlHelper::$config["helper"] = $options;
-        var_dump(UrlHelper::$config["helper"]);
-        UrlHelper::$config["helper"] = "dfgljsdfj";
-        var_dump(UrlHelper::$config["helper"]);
+        self::$config["helper"] = $options;
     }
     
     /**
@@ -125,8 +122,7 @@ class UrlHelper extends Helper
      */
     public function assetUrl($path, array $options = [])
     {
-        var_dump(UrlHelper::$config["helper"]);
-        $options = array_merge(UrlHelper::$config["helper"], $options);
+        $options = array_merge(self::$config["helper"], $options);
         
         if (is_array($path)) {
             return $this->build($path, !empty($options['fullBase']));
