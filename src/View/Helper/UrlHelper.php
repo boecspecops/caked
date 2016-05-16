@@ -29,7 +29,7 @@ class UrlHelper extends Helper
         self::$config = DefaultConfig::parseConfig($config);
         
         self::$config['helper'] = $options;
-        var_dump(self::$config['helper']);
+        var_dump(self::$config);
     }
     
     /**
