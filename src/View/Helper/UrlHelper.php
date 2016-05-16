@@ -28,7 +28,6 @@ class UrlHelper extends Helper
     public function setConfig($config, $options = []) {
         $this->config = DefaultConfig::parseConfig($config);
         
-        var_dump($options);die();
         $this->config["helper"] = $options;
     }
     
@@ -123,6 +122,7 @@ class UrlHelper extends Helper
      */
     public function assetUrl($path, array $options = [])
     {
+        var_dump($this->config["helper"]);die();
         $options = array_merge($this->config["helper"], $options);
         
         if (is_array($path)) {
