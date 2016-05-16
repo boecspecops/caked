@@ -16,7 +16,7 @@ use Cake\View\Helper;
  */
 class UrlHelper extends Helper
 {
-    private $config;
+    private static $config;
     
     private function getUrlBase($filename = "") {
         if(isset($this->config)) {
@@ -28,7 +28,7 @@ class UrlHelper extends Helper
     public function setConfig($config, $options = []) {
         $this->config = DefaultConfig::parseConfig($config);
         
-        $this->config["helper"] = $options;
+        UrlHelper::$config["helper"] = $options;
     }
     
     /**
@@ -122,8 +122,7 @@ class UrlHelper extends Helper
      */
     public function assetUrl($path, array $options = [])
     {
-        var_dump($this->config["helper"]);die();
-        $options = array_merge($this->config["helper"], $options);
+        $options = array_merge(UrlHelper::$config["helper"], $options);
         
         if (is_array($path)) {
             return $this->build($path, !empty($options['fullBase']));
