@@ -25,7 +25,7 @@ class UrlHelper extends Helper
         return "";
     }
     
-    public function setConfig($config, $prefix = null) {
+    public function setConfig($config, $options = []) {
         $this->config = DefaultConfig::parseConfig($config);
         
         if(!key_exists("prefix", $this->config)) {
@@ -35,6 +35,8 @@ class UrlHelper extends Helper
         if($prefix !== null) {
             $this->config["prefix"] = $prefix;
         }
+        
+        $this->config["helper"] = $options;
     }
     
     /**
@@ -128,9 +130,7 @@ class UrlHelper extends Helper
      */
     public function assetUrl($path, array $options = [])
     {
-        if(!empty($this->config["prefix"]) && empty($options['pathPrefix'])) {
-            $options["pathPrefix"] = $this->config["prefix"];
-        }
+        $options = array_replace($this->config, $options);
         
         if (is_array($path)) {
             return $this->build($path, !empty($options['fullBase']));
