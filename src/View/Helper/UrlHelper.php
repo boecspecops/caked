@@ -26,7 +26,7 @@ class UrlHelper extends Helper
     }
     
     public function setConfig($config, $options = []) {
-        self::$config = DefaultConfig::parseConfig($config)->as_array();
+        self::$config = DefaultConfig::parseConfig($config);
         
         self::$config['helper'] = $options;
     }

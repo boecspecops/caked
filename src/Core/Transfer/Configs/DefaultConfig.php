@@ -72,12 +72,10 @@ class DefaultConfig implements \ArrayAccess{
     public function set(array $config) {
         $this->data = array_replace_recursive($this->data, $config);
     }
-    
-    public function as_array() {
-        return is_array($this->data) ? $this->data : [];
-    }
 
-    public function offsetSet($offset, $value) {}
+    public function offsetSet($offset, $value) {
+        $this->data[$offset] = $value;
+    }
     
     public function offsetExists($offset) {
         return isset($this->data[$offset]);
