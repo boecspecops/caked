@@ -16,11 +16,11 @@ use Cake\View\Helper;
  */
 class UrlHelper extends Helper
 {
-    private static $config;
+    private static $config = null;
     
     private function getUrlBase($filename = "") {
-        if(isset($this->config)) {
-            return $this->config->getUrlBase($filename);
+        if(self::$config !== null) {
+            return self::$config->getUrlBase($filename);
         }
         return "";
     }
