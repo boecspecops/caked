@@ -97,7 +97,7 @@ class Subtask {
         } else if($files !== NULL) {
             $ent_subtask = self::getTable()->newEntity();
             $ent_subtask->tID  = $tID;
-            $ent_subtask->file = $file;
+            $ent_subtask->file = $files;
             $ent_subtask->status = SubtaskStatus::WAIT;
 
             $subtask = new Subtask($ent_subtask);
