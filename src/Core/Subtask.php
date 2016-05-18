@@ -83,18 +83,28 @@ class Subtask {
      * This function adds new subtask.
      * 
      * @param type $tID
-     * @param type $file
+     * @param type $files
+     * 
+     * returns int or array
      */    
-    public static function addSubtask($tID, $file){
-        $ent_subtask = self::getTable()->newEntity();
-        $ent_subtask->tID  = $tID;
-        $ent_subtask->file = $file;
-        $ent_subtask->status = SubtaskStatus::WAIT;
-        
-        $subtask = new Subtask($ent_subtask);
-        $subtask->save();
-        
-        return $subtask;
+    public static function addSubtask($tID, $files){
+        if(is_array($files)) {
+            $subtasks = [];
+            foreach ($files as $file ) {
+                array_push($subtasks, self::addSubtask($tID, $file));
+            }
+            return $subtasks;
+        } else {
+            $ent_subtask = self::getTable()->newEntity();
+            $ent_subtask->tID  = $tID;
+            $ent_subtask->file = $file;
+            $ent_subtask->status = SubtaskStatus::WAIT;
+
+            $subtask = new Subtask($ent_subtask);
+            $subtask->save();
+
+            return $subtask;
+        }
     }            
     
     public function __construct($subtask) {
