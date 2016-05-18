@@ -14,7 +14,7 @@ CakeD - плагин, предназначенный для запланиров
     }
 ],
 "require": {
-	"caked": "dev-wip"
+	"caked": "dev-master"
 }
 ```
 - Из корневого каталога проекта выполнить в командной строке `php composer.phar update`
