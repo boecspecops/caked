@@ -85,7 +85,7 @@ class Subtask {
      * @param type $tID
      * @param type $files
      * 
-     * returns int or array
+     * returns int | array (when multiple files found by pattern | null (when no files found by pattern)
      */    
     public static function addSubtask($tID, $files){
         if(is_array($files)) {
@@ -94,7 +94,7 @@ class Subtask {
                 array_push($subtasks, self::addSubtask($tID, $file));
             }
             return $subtasks;
-        } else {
+        } else if($files !== NULL) {
             $ent_subtask = self::getTable()->newEntity();
             $ent_subtask->tID  = $tID;
             $ent_subtask->file = $file;
@@ -105,6 +105,8 @@ class Subtask {
 
             return $subtask;
         }
+        
+        return Null;
     }            
     
     public function __construct($subtask) {

@@ -115,7 +115,6 @@ class Task {
         }
         else {
             $subtasks = glob($file_pattern);
-            var_dump($subtasks);die();
         }
         
         return Subtask::addSubtask($this->task->tID, $subtasks);
