@@ -110,12 +110,12 @@ class Task {
         if(is_array($file_pattern)) {
             foreach($file_pattern as $pattern) {
                 $files = glob($pattern);
-                
                 $subtasks = array_merge($subtasks, $files);
             }
         }
         else {
             $subtasks = glob($file_pattern);
+            var_dump($subtasks);die();
         }
         
         return Subtask::addSubtask($this->task->tID, $subtasks);
