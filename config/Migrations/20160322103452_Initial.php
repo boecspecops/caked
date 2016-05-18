@@ -3,7 +3,7 @@ use Migrations\AbstractMigration;
 
 class Initial extends AbstractMigration
 {
-    public function up()
+    public function change()
     {
         $table = $this->table('cake_d_subtasks', ['id' => false, 'primary_key' => ['sID']]);
         $table
