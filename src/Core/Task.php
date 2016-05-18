@@ -104,18 +104,22 @@ class Task {
         $this->subtasks = Subtask::getSubtasks($this->task->tID);
     }
     
-    
-    public function addfile($files) {
-        if(is_array($files)) {
-            foreach($files as $file) {
-                $this->addfile($file);
+    public function addfile($file_pattern) {
+        $subtasks = [];
+        if(is_array($file_pattern)) {
+            foreach($file_pattern as $pattern) {
+                $files = glob($pattern);
+                
+                $subtasks = array_merge($subtasks, $files);
             }
         }
         else {
-            return Subtask::addSubtask($this->task->tID, $files);
+            $subtasks = glob($file_pattern);
         }
+        
+        return Subtask::addSubtask($this->task->tID, $subtasks);
     }
-    
+            
     
     public function execute()
     {
