@@ -104,6 +104,7 @@ class Task {
         $this->subtasks = Subtask::getSubtasks($this->task->tID);
     }
     
+    
     public function addfile($file_pattern) {
         $subtasks = [];
         if(is_array($file_pattern)) {
