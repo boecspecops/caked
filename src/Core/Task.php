@@ -10,34 +10,28 @@ use CakeD\Core\Exceptions;
 use CakeD\Core\Core;
 
 class TaskStatus {
-    const WAIT          = 1;
-    const CONNECTING    = 2;
-    const ERROR         = 3;
-    const PROCESSING    = 4;
-    const COMPLETE      = 5;
-    const PAUSED        = 6;           
+    const WAIT          = "WAIT";
+    const CONNECTING    = "CONNECTING";
+    const ERROR         = "ERROR";
+    const PROCESSING    = "PROCESSING";
+    const COMPLETE      = "COMPLETE";
+    const PAUSED        = "PAUSED";
 }
 
 
 class Task {
-    
-    private static $table;
     private $fs_adapter = null;
     private $subtasks = [];
     private $task;
     
         
     /**
-     * Function returns CakePHP table object of tasks.
+     * Alias of TableRegister::get(..).
      * 
-     * @return type
+     * @return ORM/Table
      */    
     public static function getTable() {
-        if(is_null(self::$table))
-        {
-            self::$table = TableRegistry::get('cake_d_tasks');
-        }
-        return self::$table;        
+        return TableRegistry::get('cake_d_tasks');
     }
     
     
@@ -86,13 +80,13 @@ class Task {
     }
     
     
-    public static function addTask($config, $exec_time = Null) {
+    public static function addTask($method, $exec_time = Null) {
         $ent_task = self::getTable()->newEntity();
         $ent_task->exec_time = is_null($exec_time) ? new \DateTime('now') : $exec_time;
         $ent_task->status = TaskStatus::WAIT;
-        $ent_task->config_file = $config;
+        $ent_task->method = $method;
         
-        $task = new Task($ent_task, $config);
+        $task = new Task($ent_task);
         $task->save();
         
         return $task;
@@ -101,7 +95,7 @@ class Task {
     
     public function __construct($task) {
         $this->task = $task;
-        $this->subtasks = Subtask::getSubtasks($this->task->tID);
+        $this->subtasks = Subtask::getSubtasks($this->task->task_id);
     }
     
     
@@ -117,7 +111,7 @@ class Task {
             $subtasks = glob($file_pattern);
         }
         
-        return Subtask::addSubtask($this->task->tID, $subtasks);
+        return Subtask::addSubtask($this->task->task_id, $subtasks);
     }
             
     
@@ -126,7 +120,7 @@ class Task {
         $task_exec_status = true;
         try {
             $this->setStatus(TaskStatus::CONNECTING);
-            $this->fs_adapter = DefaultConfig::getAdapter($this->task->config_file);
+            $this->fs_adapter = DefaultConfig::getAdapter($this->task->method);
             $this->setStatus(TaskStatus::PROCESSING);
             
             foreach($this->subtasks as $subtask) {

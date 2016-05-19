@@ -24,13 +24,6 @@ class TaskShell extends Shell
 
         return $parser;
     }
-
-    /**
-     * main() method.
-     *
-     * @return bool|int Success or error code.
-     */
-    
     
     public function main() 
     {
@@ -42,5 +35,10 @@ class TaskShell extends Shell
                 break;
             }            
         }
+    }
+    
+    public function add($pattern, $exec_time, $method = "DROPBOX") {
+        $task = Task::addTask($method, $exec_time);
+        $task->addfile($pattern);
     }
 }

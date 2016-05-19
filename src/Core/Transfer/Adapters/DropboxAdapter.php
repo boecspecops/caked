@@ -14,11 +14,32 @@ use CakeD\Core\Exceptions;
 class DropboxAdapter implements AdapterInterface {
     
     private $instance;
-    private $config = null;
+    private $config = [
+            'connection' => [
+                'token' => null,
+            ],
+            'directory' => [
+                'root' => '/'
+            ],
+            'mode' => 'rw'
+        ];
     
-    public function __construct($config) {
-        $this->config = new DropboxConfig($config);
+    public function __construct() {
+        if($this->config === null) {
+            $this->config = Configure::load('CakeD.config')['DROPBOX'];
+        }
         $this->instance = $this->config->getClient();
+    }
+       
+    public function getClient() {
+        $connection = $this->config['token'];
+        if($connection !== null) {
+            $client = new dbx\Client($connection, $this->config['directory']);
+        } else {
+            throw(new Exceptions\ConfigParamNotFound(["param" => "token"]));
+        }
+        
+        return $client;
     }
     
     public function write($localfile, $file_name = Null) {        

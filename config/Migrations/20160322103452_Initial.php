@@ -5,22 +5,22 @@ class Initial extends AbstractMigration
 {
     public function change()
     {
-        $table = $this->table('cake_d_subtasks', ['id' => false, 'primary_key' => ['sID']]);
+        $table = $this->table('cake_d_subtasks', ['id' => false, 'primary_key' => ['subtask_id']]);
         $table
-            ->addColumn('sID', 'integer', [
+            ->addColumn('subtask_id', 'integer', [
                 'autoIncrement' => true,
                 'default' => null,
                 'limit' => 25,
                 'null' => false,
             ])
-            ->addColumn('tID', 'integer', [
+            ->addColumn('task_id', 'integer', [
                 'default' => null,
                 'limit' => 20,
                 'null' => false,
             ])
-            ->addColumn('status', 'integer', [
-                'default' => 1,
-                'limit' => 3,
+            ->addColumn('status', 'text', [
+                'default' => 'WAIT',
+                'limit' => 32,
                 'null' => true,
             ])
             ->addColumn('file', 'text', [
@@ -40,9 +40,8 @@ class Initial extends AbstractMigration
             ])
             ->create();
 
-        $table = $this->table('cake_d_tasks', ['id' => false, 'primary_key' => ['tID']]);
-        $table
-            ->addColumn('tID', 'integer', [
+        $table = $this->table('cake_d_tasks', ['id' => false, 'primary_key' => ['task_id']]);
+        $table->addColumn('task_id', 'integer', [
                 'autoIncrement' => true,
                 'default' => null,
                 'limit' => 20,
@@ -53,12 +52,17 @@ class Initial extends AbstractMigration
                 'limit' => null,
                 'null' => false,
             ])
-            ->addColumn('status', 'integer', [
-                'default' => 1,
-                'limit' => 3,
+            ->addColumn('status', 'text', [
+                'default' => 'WAIT',
+                'limit' => 32,
                 'null' => true,
             ])
-            ->addColumn('config_file', 'text', [
+            ->addColumn('method', 'text', [
+                'default' => null,
+                'limit' => null,
+                'null' => true,
+            ])
+            ->addColumn('directory', 'text', [
                 'default' => null,
                 'limit' => null,
                 'null' => true,
