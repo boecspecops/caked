@@ -27,18 +27,18 @@ class TaskShell extends Shell
     
     public function main() 
     {
-        $tasks = Task::getIncompletedTasks();
-        foreach($tasks as $task) {
-            if(Task::count() < Core::getConfig()['limitations']['max_tasks']) {
-                $this->Task->main($task);
-            } else {
-                break;
-            }            
-        }
+        $stats = Task::tick();
+        $this->out('Ok. Files sent ' . $stats["subtasks"] . '/' . $stats["success"] . '.', 1, Shell::QUIET);
     }
     
-    public function add($pattern, $exec_time, $method = "DROPBOX") {
-        $task = Task::addTask($method, $exec_time);
+    public function add($pattern, $method = "DROPBOX", $exec_time = null) {
+        $exec_time === null ? : $exec_time = new \DateTime($exec_time);
+        $task = Task::add($method, $exec_time);
+        $task->addfile($pattern);
+    }
+    
+    public function addfile($task_id, $pattern) {
+        $task = Task::getById($task_id);
         $task->addfile($pattern);
     }
 }

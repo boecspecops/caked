@@ -49,4 +49,8 @@ class TaskManagerComponent extends Component
     public function addfile($task, $files) {
         return $task->addfile($files);
     }
+    
+    public function process() {
+        return Task::tick();
+    }
 }

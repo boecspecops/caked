@@ -19,9 +19,8 @@ class Initial extends AbstractMigration
                 'null' => false,
             ])
             ->addColumn('status', 'text', [
-                'default' => 'WAIT',
                 'limit' => 32,
-                'null' => true,
+                'null' => false,
             ])
             ->addColumn('file', 'text', [
                 'default' => null,
@@ -53,9 +52,8 @@ class Initial extends AbstractMigration
                 'null' => false,
             ])
             ->addColumn('status', 'text', [
-                'default' => 'WAIT',
                 'limit' => 32,
-                'null' => true,
+                'null' => false,
             ])
             ->addColumn('method', 'text', [
                 'default' => null,

@@ -2,8 +2,8 @@
 
 namespace CakeD\Core\Transfer\Adapters;
 use Dropbox as dbx;
-use CakeD\Core\Transfer\Configs\DropboxConfig;
 use CakeD\Core\Exceptions;
+use Cake\Core\Configure;
 
 /**
  * This adapter provides basic functionality to write files on dropbox servers

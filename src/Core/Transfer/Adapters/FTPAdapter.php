@@ -2,7 +2,6 @@
 namespace CakeD\Core\Transfer\Adapters;
 
 use CakeD\Core\Exceptions;
-use CakeD\Core\Transfer\Configs\FTPConfig;
 use Cake\Core\Configure;
 
 /**

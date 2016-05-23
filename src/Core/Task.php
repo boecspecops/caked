@@ -50,7 +50,7 @@ class Task {
      * 
      * @return type
      */
-    public static function getIncompletedTasks() {
+    public static function getIncompleted() {
         $query = self::getTable()->find();
         $query->select();
         return $query->where(function ($exp) {
@@ -65,22 +65,27 @@ class Task {
     
     
     public static function tick() {
-        $tasks = Task::getIncompletedTasks();
+        $statistics = ["subtasks" => 0, "success" => 0];
+        $tasks = Task::getIncompleted();
         foreach($tasks as $task) {
             if(self::countTasks() < Core::getConfig()['limitations']['max_tasks']) {
-                Task::init_and_execute($task);                
+                $temp_stats = Task::init_and_execute($task);
+                $statistics["subtasks"] += $temp_stats["subtasks"];
+                $statistics["success"] += $temp_stats["success"];
             }
         }
+        
+        return $statistics;
     }
     
     
     public static function init_and_execute($task_entity) {
         $task = new Task($task_entity);
-        $task->execute();
+        return $task->execute();
     }
     
     
-    public static function addTask($method, $exec_time = Null) {
+    public static function add($method, $exec_time = Null) {
         $ent_task = self::getTable()->newEntity();
         $ent_task->exec_time = is_null($exec_time) ? new \DateTime('now') : $exec_time;
         $ent_task->status = TaskStatus::WAIT;
@@ -90,6 +95,13 @@ class Task {
         $task->save();
         
         return $task;
+    }
+    
+    
+    public static function getById($task_id) {
+        $query = self::getTable()->find();
+        $query->select();
+        return $query->where(["task_id" => $task_id]);
     }
     
     
@@ -117,17 +129,17 @@ class Task {
     
     public function execute()
     {
-        $task_exec_status = true;
+        $statistics = ["subtasks" => count($this->subtasks), "completed" => 0];
         try {
             $this->setStatus(TaskStatus::CONNECTING);
             $this->fs_adapter = DefaultConfig::getAdapter($this->task->method);
             $this->setStatus(TaskStatus::PROCESSING);
             
             foreach($this->subtasks as $subtask) {
-                $subtask->execute($this->fs_adapter) ? : $task_exec_status = false;
+                !$subtask->execute($this->fs_adapter) ? : $statistics["completed"]++;
             }
         
-            if($task_exec_status) {
+            if($statistics["completed"] == $statistics["subtasks"]) {
                 $this->task->error = null;
                 $this->setStatus(TaskStatus::COMPLETE);
             } else {
@@ -148,6 +160,8 @@ class Task {
         }
         finally {
             unset($this->fs_adapter);
+            
+            return $statistics;
         }
     }
     
