@@ -31,9 +31,9 @@ class TaskShell extends Shell
         $this->out('Ok. Files sent ' . $stats["subtasks"] . '/' . $stats["success"] . '.', 1, Shell::QUIET);
     }
     
-    public function add($pattern, $method = "DROPBOX", $exec_time = null) {
+    public function add($pattern, $method = "DROPBOX", $directory = null, $exec_time = null) {
         $exec_time === null ? : $exec_time = new \DateTime($exec_time);
-        $task = Task::add($method, $exec_time);
+        $task = Task::add($method, $directory, $exec_time);
         $task->addfile($pattern);
     }
     

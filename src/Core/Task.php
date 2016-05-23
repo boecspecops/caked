@@ -85,11 +85,12 @@ class Task {
     }
     
     
-    public static function add($method, $exec_time = Null) {
+    public static function add($method, $directory, $exec_time = Null) {
         $ent_task = self::getTable()->newEntity();
         $ent_task->exec_time = is_null($exec_time) ? new \DateTime('now') : $exec_time;
         $ent_task->status = TaskStatus::WAIT;
         $ent_task->method = $method;
+        $ent_task->directory = $directory;
         
         $task = new Task($ent_task);
         $task->save();
@@ -155,6 +156,10 @@ class Task {
             $this->setStatus(TaskStatus::ERROR);
         } 
         catch(Exceptions\FileNotFound $e) {       // Config file not found
+            $this->task->error = $e->getMessage();    
+            $this->setStatus(TaskStatus::ERROR);
+        }
+        catch(Exceptions\ConfigParamNotFound $e) {
             $this->task->error = $e->getMessage();    
             $this->setStatus(TaskStatus::ERROR);
         }
