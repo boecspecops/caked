@@ -37,6 +37,10 @@ class TaskShell extends Shell
         $this->out('Created new task with id: ' . $task["task_id"], 1, Shell::QUIET);
     }
     
+    public function addfiles($task_id, $pattern) {
+        $this->addfile($task_id, $pattern);
+    }
+    
     public function addfile($task_id, $pattern) {
         $task = Task::getById($task_id);
         $this->out('Files added: ' . count($task->addfile($pattern)), 1, Shell::QUIET);
