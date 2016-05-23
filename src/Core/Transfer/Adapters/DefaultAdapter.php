@@ -20,7 +20,7 @@ class DefaultAdapter {
                 throw new Exceptions\ConfigParamNotFound("[Config] Adapter not selected.");
             }
             default: {
-                throw new Exceptions\ConfigParamNotFound("[Config] Adapter not found.");
+                throw new Exceptions\ConfigParamNotFound("[Config] Adapter " . $method . " not found.");
             }
         }
     }
