@@ -39,6 +39,6 @@ class TaskShell extends Shell
     
     public function addfile($task_id, $pattern) {
         $task = Task::getById($task_id);
-        $task->addfile($pattern);
+        $this->out('Files added: ' . count($task->addfile($pattern)), 1, Shell::QUIET);
     }
 }
