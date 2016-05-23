@@ -97,7 +97,7 @@ class Task implements \ArrayAccess {
     public static function getById($task_id) {
         $query = self::getTable()->find();
         $query->select();
-        return $query->where(["task_id" => $task_id]);
+        return new Task($query->where(["task_id" => $task_id]));
     }
     
     
