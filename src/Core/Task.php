@@ -68,7 +68,7 @@ class Task {
         $statistics = ["subtasks" => 0, "success" => 0];
         $tasks = Task::getIncompleted();
         foreach($tasks as $task) {
-            if(self::countTasks() < Core::getConfig()['limitations']['max_tasks']) {
+            if(self::count() < Core::getConfig()['limitations']['max_tasks']) {
                 $temp_stats = Task::init_and_execute($task);
                 $statistics["subtasks"] += $temp_stats["subtasks"];
                 $statistics["success"] += $temp_stats["success"];
