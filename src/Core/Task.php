@@ -97,13 +97,13 @@ class Task implements \ArrayAccess {
     public static function getById($task_id) {
         $query = self::getTable()->find();
         $query->select();
-        return new Task($query->where(["task_id" => $task_id]));
+        return new Task($query->where(["task_id" => $task_id])->first());
     }
     
     
     public function __construct($task) {
         $this->task = $task;
-        $this->subtasks = Subtask::getSubtasks($this->task->subtask_id);
+        $this->subtasks = Subtask::getSubtasks($this->task->task_id);
     }
     
     

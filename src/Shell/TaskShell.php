@@ -41,8 +41,4 @@ class TaskShell extends Shell
         $task = Task::getById($task_id);
         $task->addfile($pattern);
     }
-    
-    public function helloworld() {
-        
-    }
 }
