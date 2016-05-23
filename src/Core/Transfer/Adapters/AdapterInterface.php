@@ -5,7 +5,7 @@ namespace CakeD\Core\Transfer\Adapters;
 
 interface AdapterInterface {
         
-    public function __construct($config);
+    public function __construct();
     
     public function getClient();
     
