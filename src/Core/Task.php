@@ -130,7 +130,7 @@ class Task implements \ArrayAccess {
     
     public function execute()
     {
-        $statistics = ["subtasks" => count($this->subtasks), "completed" => 0];
+        $statistics = ["subtasks" => count($this->subtasks), "success" => 0];
         try {
             $this->setStatus(TaskStatus::CONNECTING);
             $this->fs_adapter = DefaultAdapter::getAdapter($this->task->method);
