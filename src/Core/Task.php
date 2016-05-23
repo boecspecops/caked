@@ -19,7 +19,7 @@ class TaskStatus {
 }
 
 
-class Task implements ArrayAccess {
+class Task implements \ArrayAccess {
     private $fs_adapter = null;
     private $subtasks = [];
     private $task;
