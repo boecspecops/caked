@@ -103,7 +103,7 @@ class Task implements \ArrayAccess {
     
     public function __construct($task) {
         $this->task = $task;
-        $this->subtasks = Subtask::getSubtasks($this->task->task_id);
+        $this->subtasks = Subtask::getSubtasks($this->task->subtask_id);
     }
     
     
