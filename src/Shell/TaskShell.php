@@ -34,6 +34,7 @@ class TaskShell extends Shell
     public function add($pattern, $method = "DROPBOX", $directory = null, $exec_time = null) {
         $exec_time === null ? : $exec_time = new \DateTime($exec_time);
         $task = Task::add($method, $directory, $exec_time);
+        $this->out('Created new task with id: ' . $task["task_id"], 1, Shell::QUIET);
         $task->addfile($pattern);
     }
     
