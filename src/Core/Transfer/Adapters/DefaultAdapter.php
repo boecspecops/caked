@@ -6,7 +6,7 @@ use CakeD\Core\Transfer\Adapters;
 
 class DefaultAdapter {
     
-    public function getAdapter($method) {
+    public static function getAdapter($method) {
         switch($method) {
             case "FTP": {
                 return new Adapters\FTPAdapter();

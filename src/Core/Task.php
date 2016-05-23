@@ -5,7 +5,7 @@ namespace CakeD\Core;
 
 use Cake\ORM\TableRegistry;
 use CakeD\Core\Subtask;
-use CakeD\Core\Transfer\Configs\DefaultConfig;
+use CakeD\Core\Transfer\Adapters\DefaultAdapter;
 use CakeD\Core\Exceptions;
 use CakeD\Core\Core;
 
@@ -132,7 +132,7 @@ class Task {
         $statistics = ["subtasks" => count($this->subtasks), "completed" => 0];
         try {
             $this->setStatus(TaskStatus::CONNECTING);
-            $this->fs_adapter = DefaultConfig::getAdapter($this->task->method);
+            $this->fs_adapter = DefaultAdapter::getAdapter($this->task->method);
             $this->setStatus(TaskStatus::PROCESSING);
             
             foreach($this->subtasks as $subtask) {
