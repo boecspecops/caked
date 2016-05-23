@@ -2,7 +2,6 @@
 namespace CakeD\Shell;
 
 use Cake\Console\Shell;
-use CakeD\Core\Core;
 use CakeD\Core\Task;
 
 /**
@@ -41,5 +40,9 @@ class TaskShell extends Shell
     public function addfile($task_id, $pattern) {
         $task = Task::getById($task_id);
         $task->addfile($pattern);
+    }
+    
+    public function helloworld() {
+        
     }
 }
