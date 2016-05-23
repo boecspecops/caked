@@ -3,6 +3,7 @@
 namespace CakeD\Core\Transfer\Adapters;
 
 use CakeD\Core\Transfer\Adapters;
+use CakeD\Core\Exceptions;
 
 class DefaultAdapter {
     
