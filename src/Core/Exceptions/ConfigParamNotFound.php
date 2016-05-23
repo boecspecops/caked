@@ -8,11 +8,13 @@
 
 namespace CakeD\Core\Exceptions;
 
+use Cake\Core\Exception\Exception;
+
 /**
  * Description of ConfigParamNotFound
  *
  * @author boecspecops
  */
-class ConfigParamNotFound {
+class ConfigParamNotFound extends Exception {
     //put your code here
 }
