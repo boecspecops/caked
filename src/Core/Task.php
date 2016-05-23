@@ -65,17 +65,12 @@ class Task implements \ArrayAccess {
     
     
     public static function tick() {
-        $statistics = ["subtasks" => 0, "success" => 0];
         $tasks = Task::getIncompleted();
         foreach($tasks as $task) {
-            if(self::count() < Core::getConfig()['limitations']['max_tasks']) {
-                $temp_stats = Task::init_and_execute($task);
-                $statistics["subtasks"] += $temp_stats["subtasks"];
-                $statistics["success"] += $temp_stats["success"];
-            }
+            Task::init_and_execute($task);
         }
         
-        return $statistics;
+        return $tasks;
     }
     
     
@@ -199,6 +194,10 @@ class Task implements \ArrayAccess {
     }
 
     public function offsetGet($offset) {
-        return isset($this->task[$offset]) ? $this->task[$offset] : null;
+        if(strcmp($offset, "subtasks") == 0) {
+            return $this->subtasks;
+        } else {
+            return isset($this->task[$offset])? $this->task[$offset] : null;
+        }
     }
 }

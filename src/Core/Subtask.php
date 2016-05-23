@@ -153,4 +153,24 @@ class Subtask {
         $this->task->status = $status;
         $this->save();
     }
+    
+    public function offsetSet($offset, $value) {
+        if (is_null($offset)) {
+            $this->task[] = $value;
+        } else {
+            $this->task[$offset] = $value;
+        }
+    }
+
+    public function offsetExists($offset) {
+        return isset($this->task[$offset]);
+    }
+
+    public function offsetUnset($offset) {
+        unset($this->task[$offset]);
+    }
+
+    public function offsetGet($offset) {
+        return isset($this->task[$offset]) ? $this->task[$offset] : null;
+    }
 }
