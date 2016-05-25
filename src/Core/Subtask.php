@@ -118,17 +118,16 @@ class Subtask {
      * @param type $fs_adapter
      */
     
-    public function execute($fs_adapter) {
+    public function execute($fs_adapter, $directory) {
         $this->setStatus(SubtaskStatus::QUEUE);
-        echo 'Pidr3';
         if(!file_exists($this->task->file)) {
+            $this->task->error = $this->task->file;
             $this->setStatus(SubtaskStatus::NOT_EXIST);
             return false;
         } else {
             try {
                 $this->setStatus(SubtaskStatus::TRANSFER);
-                echo 'Pidr2';
-                $fs_adapter->write($this->task->file);
+                $fs_adapter->write($directory . $this->task->file);
                 
                 $this->task->error = null;
                 $this->setStatus(SubtaskStatus::COMPLETE);

@@ -123,7 +123,6 @@ class Task implements \ArrayAccess {
         foreach($subtasks as $key => $subtask) {
             if(strpos($subtask, $this->task->directory) == 0) {
                 $subtasks[$key] = substr( $subtask, strlen($this->task->directory));
-                echo $subtasks[$key];
             }
         }
         
@@ -140,7 +139,7 @@ class Task implements \ArrayAccess {
             $this->setStatus(TaskStatus::PROCESSING);
             
             foreach($this->subtasks as $subtask) {
-                !$subtask->execute($this->fs_adapter) ? : $statistics["completed"]++;
+                !$subtask->execute($this->fs_adapter, $this->task->directory) ? : $statistics["completed"]++;
             }
         
             if($statistics["success"] == $statistics["subtasks"]) {
