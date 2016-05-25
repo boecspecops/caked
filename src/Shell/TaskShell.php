@@ -27,7 +27,17 @@ class TaskShell extends Shell
     public function main() 
     {
         $stats = Task::tick();
-        $this->out('Files sent '. $stats["success"] . '/'  . $stats["subtasks"] . '.', 1, Shell::QUIET);
+        
+        $tasks = count($stats);
+        $files = 0;
+        $completed = 0;
+        
+        foreach($stats as $stat) {
+            $files += $stat["subtasks"];
+            $completed += $stat["success"];
+        }
+        
+        $this->out('Tasks executed: ' . $tasks . '; Files sent: ' . $completed . '/' . $files, 1, Shell::QUIET);
     }
     
     public function add( $directory = null, $method = "DROPBOX", $exec_time = null) {

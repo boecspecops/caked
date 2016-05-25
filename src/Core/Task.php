@@ -65,12 +65,13 @@ class Task implements \ArrayAccess {
     
     
     public static function tick() {
+        $stats = [];
         $tasks = Task::getIncompleted();
         foreach($tasks as $task) {
-            Task::init_and_execute($task);
+            array_push($stats, Task::init_and_execute($task));
         }
         
-        return $tasks;
+        return $stats;
     }
     
     
