@@ -56,7 +56,7 @@ class FTPAdapter implements AdapterInterface {
         ftp_close( $this->instance );
     }
     
-    public function write($localfile) {
+    public function write($root, $localfile) {
         $filelist = ftp_nlist($this->instance, './');
         
         if(in_array($file_name, $filelist) && !$this->config['rw'] )

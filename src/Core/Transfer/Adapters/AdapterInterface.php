@@ -9,7 +9,7 @@ interface AdapterInterface {
     
     public function getClient();
     
-    public function write($file);
+    public function write($root, $file);
     
     public function is_dir($path);
     

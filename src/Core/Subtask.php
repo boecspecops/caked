@@ -122,7 +122,7 @@ class Subtask {
         $this->setStatus(SubtaskStatus::QUEUE);
         try {
             $this->setStatus(SubtaskStatus::TRANSFER);
-            $fs_adapter->write($directory . $this->task->file);
+            $fs_adapter->write($directory, $this->task->file);
 
             $this->task->error = null;
             $this->setStatus(SubtaskStatus::COMPLETE);
