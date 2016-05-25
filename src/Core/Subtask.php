@@ -120,30 +120,25 @@ class Subtask {
     
     public function execute($fs_adapter, $directory) {
         $this->setStatus(SubtaskStatus::QUEUE);
-        if(!file_exists($this->task->file)) {
-            $this->task->error = $this->task->file;
-            $this->setStatus(SubtaskStatus::NOT_EXIST);
-            return false;
-        } else {
-            try {
-                $this->setStatus(SubtaskStatus::TRANSFER);
-                $fs_adapter->write($directory . $this->task->file);
-                
-                $this->task->error = null;
-                $this->setStatus(SubtaskStatus::COMPLETE);
-                return true;
-            }
-            catch(Exceptions\RemoteException $e) {
-                $this->task->error = $e->getMessage();
-                $this->setStatus(SubtaskStatus::ERROR);
-                return false;
-            }
-            catch(Exceptions\ConnectionReset $e) {
-                $this->task->error = $e->getMessage();
-                $this->setStatus(SubtaskStatus::ERROR);
-                return false;
-            }
+        try {
+            $this->setStatus(SubtaskStatus::TRANSFER);
+            $fs_adapter->write($directory . $this->task->file);
+
+            $this->task->error = null;
+            $this->setStatus(SubtaskStatus::COMPLETE);
+            return true;
         }
+        catch(Exceptions\RemoteException $e) {
+            $this->task->error = $e->getMessage();
+            $this->setStatus(SubtaskStatus::ERROR);
+            return false;
+        }
+        catch(Exceptions\ConnectionReset $e) {
+            $this->task->error = $e->getMessage();
+            $this->setStatus(SubtaskStatus::ERROR);
+            return false;
+        }
+        
     }    
     public function save() {
         self::getTable()->save($this->task);
