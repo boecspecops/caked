@@ -14,15 +14,7 @@ use Cake\Core\Configure;
 class DropboxAdapter implements AdapterInterface {
     
     private $instance;
-    private $config = [
-            'connection' => [
-                'token' => null,
-            ],
-            'directory' => [
-                'root' => '/'
-            ],
-            'mode' => 'rw'
-        ];
+    private $config = null;
     
     public function __construct() {
         if($this->config === null) {
