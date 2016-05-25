@@ -44,11 +44,11 @@ class DropboxAdapter implements AdapterInterface {
     }
     
     public function write($localfile, $file_name = Null) {        
+        echo 'Пидр1';
         if($file_name === Null) {
             $file_name = basename($localfile);
         }
         
-        throw(new Exceptions\ConfigParamNotFound('This shit goes here!1'));
         $path = $this->config['directory'];
         
         $f = fopen($localfile, "rb");
@@ -60,9 +60,6 @@ class DropboxAdapter implements AdapterInterface {
             case "a": {
                 $request = dbx\WriteMode::add();
                 break;
-            }
-            default: {
-                throw(new Exceptions\ConfigParamNotFound('This shit goes here!2'));
             }
         }
         try{

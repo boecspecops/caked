@@ -120,13 +120,14 @@ class Subtask {
     
     public function execute($fs_adapter) {
         $this->setStatus(SubtaskStatus::QUEUE);
-        
+        echo 'Pidr3';
         if(!file_exists($this->task->file)) {
             $this->setStatus(SubtaskStatus::NOT_EXIST);
             return false;
         } else {
             try {
                 $this->setStatus(SubtaskStatus::TRANSFER);
+                echo 'Pidr2';
                 $fs_adapter->write($this->task->file);
                 
                 $this->task->error = null;
