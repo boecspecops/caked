@@ -40,8 +40,6 @@ class DropboxAdapter implements AdapterInterface {
     }
     
     public function write($root, $localfile) {
-        $dropbox_root = $this->config['directory'] == '/' ? '' : $this->config['directory'];
-        
         $f = fopen($root.$localfile, "rb");
         
         if(!$f) {
@@ -61,7 +59,7 @@ class DropboxAdapter implements AdapterInterface {
         
         try{
             echo $root . $localfile;
-            $this->instance->uploadFile($dropbox_root.$localfile, $request, $f);
+            $this->instance->uploadFile($this->config['directory'].$localfile, $request, $f);
         }
         catch(dbx\Exception_NetworkIO $e) {
             throw(new Exceptions\ConnectionReset($e->getMessage()));
