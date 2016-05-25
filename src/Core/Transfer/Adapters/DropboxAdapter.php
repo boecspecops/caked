@@ -52,6 +52,11 @@ class DropboxAdapter implements AdapterInterface {
         $path = $this->config['directory'];
         
         $f = fopen($localfile, "rb");
+        
+        if(!$f) {
+            throw(new Exceptions\FileNotFound("[DROPBOX] File \"$localfile\" not found."));
+        }
+        
         switch($this->config["mode"]) {
             case "rw": {
                 $request = dbx\WriteMode::force();
