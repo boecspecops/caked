@@ -27,7 +27,6 @@ class TaskShell extends Shell
     public function main() 
     {
         $stats = Task::tick();
-        
         $tasks = count($stats);
         $files = 0;
         $completed = 0;

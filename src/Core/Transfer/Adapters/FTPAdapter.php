@@ -59,7 +59,7 @@ class FTPAdapter implements AdapterInterface {
     public function write($root, $localfile) {
         $filelist = ftp_nlist($this->instance, './');
         
-        if(in_array($file_name, $filelist) && !$this->config['rw'] )
+        if(in_array($localfile, $filelist) && !$this->config['rw'] )
         {
             throw(new Exceptions\RemoteException("[FTP] file writing failed. File alredy exists."));
         }    
