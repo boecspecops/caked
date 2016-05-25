@@ -111,13 +111,12 @@ class Task implements \ArrayAccess {
         $subtasks = [];
         if(is_array($file_pattern)) {
             foreach($file_pattern as $pattern) {
-                throw new \Exception($this->task->directory . $pattern);
                 $files = glob($this->task->directory . $pattern);
                 $subtasks = array_merge($subtasks, $files);
             }
         }
         else {
-            $subtasks = glob($file_pattern);
+            $subtasks = glob($this->task->directory . $file_pattern);
         }
         
         return Subtask::addSubtask($this->task->task_id, $subtasks);
