@@ -17,9 +17,8 @@ class DropboxAdapter implements AdapterInterface {
     private $config = null;
     
     public function __construct() {
-        if($this->config === null) {
-            $this->config = Configure::load('CakeD.config')['DROPBOX'];
-        }
+        $this->config = Configure::load('CakeD.config')['DROPBOX'];
+        
         $this->instance = $this->getClient();
     }
        
