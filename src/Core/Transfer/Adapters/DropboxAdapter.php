@@ -17,23 +17,18 @@ class DropboxAdapter implements AdapterInterface {
     private $config = null;
     
     public function __construct() {
-        echo '=== 1';
         Configure::load('CakeD.config');
         $this->config = Configure::read('DROPBOX');
         
-        echo '=== 2';
         if($this->config['token'] === null) {
             throw(new Exceptions\ConfigParamNotFound('Parameter token is null.'));
         }
-        echo '=== 3';
         if($this->config['directory'] === null) {
             $this->config['directory'] = '';
         }
-        echo '=== 4';
         if($this->config['mode'] === null) {
             $this->config['mode'] = 'rw';
         }
-        echo '=== 5';
         
         $this->instance = $this->getClient();
     }
@@ -46,11 +41,12 @@ class DropboxAdapter implements AdapterInterface {
     
     public function write($localfile) {
         $path = $this->config['directory'];
+        $root = $this->config['directory'] == '/' ? '' : $this->config['directory'];
         
         $f = fopen($localfile, "rb");
         
         if(!$f) {
-            throw(new Exceptions\FileNotFound("[DROPBOX] File \"$localfile\" not found."));
+            throw(new Exceptions\FileNotFound("[DROPBOX] File \"$root$localfile\" not found."));
         }
         
         switch($this->config["mode"]) {
@@ -65,8 +61,8 @@ class DropboxAdapter implements AdapterInterface {
         }
         
         try{
-            echo 'i\'m trying this!!! ' . $path . $localfile;
-            $this->instance->uploadFile($path . $localfile, $request, $f);
+            echo 'i\'m trying this!!! ' . $root . $localfile;
+            $this->instance->uploadFile($root . $localfile, $request, $f);
         }
         catch(dbx\Exception_NetworkIO $e) {
             throw(new Exceptions\ConnectionReset($e->getMessage()));
