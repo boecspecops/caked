@@ -57,6 +57,10 @@ class DropboxAdapter implements AdapterInterface {
                 $request = dbx\WriteMode::add();
                 break;
             }
+            default: {
+                throw(new Exceptions\ConfigParamNotFound('This shit goes here!'));
+                
+            }
         }
         try{
             $this->instance->uploadFile($path . $file_name, $request, $f);
