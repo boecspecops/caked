@@ -49,10 +49,7 @@ class DropboxAdapter implements AdapterInterface {
         $f = fopen($localfile, "rb");
         
         if(!$f) {
-            echo 'whatthefuck!?';
             throw(new Exceptions\FileNotFound("[DROPBOX] File \"$localfile\" not found."));
-        } else {
-            echo 'normal work, comrade!';
         }
         
         switch($this->config["mode"]) {
@@ -67,6 +64,7 @@ class DropboxAdapter implements AdapterInterface {
         }
         
         try{
+            echo 'i\'m trying this!!! ' . $path . $localfile;
             $this->instance->uploadFile($path . $localfile, $request, $f);
         }
         catch(dbx\Exception_NetworkIO $e) {
