@@ -44,11 +44,11 @@ class DropboxAdapter implements AdapterInterface {
     }
     
     public function write($localfile, $file_name = Null) {        
-        echo 'Пидр1';
+        
         if($file_name === Null) {
             $file_name = basename($localfile);
         }
-        
+        echo 'Пидр1';
         $path = $this->config['directory'];
         
         $f = fopen($localfile, "rb");
@@ -62,6 +62,7 @@ class DropboxAdapter implements AdapterInterface {
                 break;
             }
         }
+        echo 'Этого пидора в Химках видал!';
         try{
             $this->instance->uploadFile($path . $file_name, $request, $f);
         }
@@ -71,6 +72,7 @@ class DropboxAdapter implements AdapterInterface {
         finally {
             fclose($f);
         }
+        echo "\nДеревянными членами торгует!";
     }
     
     public function is_dir($path) {
