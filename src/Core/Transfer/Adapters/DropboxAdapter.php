@@ -30,6 +30,9 @@ class DropboxAdapter implements AdapterInterface {
         if($this->config['directory'] === null) {
             $this->config['directory'] = '/';
         }
+        if($this->config['mode'] === null) {
+            $this->config['mode'] = 'rw';
+        }
         
         if($this->config['token'] !== null) {
             $client = new dbx\Client($this->config['token'], $this->config['directory']);
@@ -45,6 +48,7 @@ class DropboxAdapter implements AdapterInterface {
             $file_name = basename($localfile);
         }
         
+        throw(new Exceptions\ConfigParamNotFound('This shit goes here!1'));
         $path = $this->config['directory'];
         
         $f = fopen($localfile, "rb");
@@ -58,8 +62,7 @@ class DropboxAdapter implements AdapterInterface {
                 break;
             }
             default: {
-                throw(new Exceptions\ConfigParamNotFound('This shit goes here!'));
-                
+                throw(new Exceptions\ConfigParamNotFound('This shit goes here!2'));
             }
         }
         try{
