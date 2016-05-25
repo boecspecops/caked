@@ -40,7 +40,6 @@ class DropboxAdapter implements AdapterInterface {
     }
     
     public function write($localfile) {
-        $path = $this->config['directory'];
         $root = $this->config['directory'] == '/' ? '' : $this->config['directory'];
         
         $f = fopen($localfile, "rb");
@@ -48,7 +47,6 @@ class DropboxAdapter implements AdapterInterface {
         if(!$f) {
             throw(new Exceptions\FileNotFound("[DROPBOX] File \"$root$localfile\" not found."));
         }
-            throw(new Exceptions\FileNotFound("[DROPBOX] File \"$root$localfile\" not found."));
         
         switch($this->config["mode"]) {
             case "rw": {
@@ -62,6 +60,7 @@ class DropboxAdapter implements AdapterInterface {
         }
         
         try{
+            echo $root . $localfile;
             $this->instance->uploadFile($root . $localfile, $request, $f);
         }
         catch(dbx\Exception_NetworkIO $e) {
