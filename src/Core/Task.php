@@ -139,7 +139,7 @@ class Task implements \ArrayAccess {
             $this->setStatus(TaskStatus::PROCESSING);
             
             foreach($this->subtasks as $subtask) {
-                !$subtask->execute($this->fs_adapter, $this->task->directory) ? : $statistics["completed"]++;
+                !$subtask->execute($this->fs_adapter, $this->task->directory) ? : $statistics["success"]++;
             }
         
             if($statistics["success"] == $statistics["subtasks"]) {
