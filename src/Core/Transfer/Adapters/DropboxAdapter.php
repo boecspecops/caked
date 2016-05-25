@@ -17,28 +17,29 @@ class DropboxAdapter implements AdapterInterface {
     private $config = null;
     
     public function __construct() {
+        echo '=== 1';
         Configure::load('CakeD.config');
         $this->config = Configure::read('DROPBOX');
+        
+        echo '=== 2';
+        if($this->config['token'] === null) {
+            throw(new Exceptions\ConfigParamNotFound('Parameter token is null.'));
+        }
+        echo '=== 3';
+        if($this->config['directory'] === null) {
+            $this->config['directory'] = '';
+        }
+        echo '=== 4';
+        if($this->config['mode'] === null) {
+            $this->config['mode'] = 'rw';
+        }
+        echo '=== 5';
         
         $this->instance = $this->getClient();
     }
        
     public function getClient() {
-        if($this->config['token'] === null) {
-            throw(new Exceptions\ConfigParamNotFound('Parameter token is null.'));
-        }
-        if($this->config['directory'] === null || $this->config['directory'] == '/') {
-            $this->config['directory'] = '';
-        }
-        if($this->config['mode'] === null) {
-            $this->config['mode'] = 'rw';
-        }
-        
-        if($this->config['token'] !== null) {
-            $client = new dbx\Client($this->config['token'], $this->config['directory']);
-        } else {
-            throw(new Exceptions\ConfigParamNotFound('Parameter token is null.'));
-        }
+        $client = new dbx\Client($this->config['token'], $this->config['directory']);
         
         return $client;
     }
