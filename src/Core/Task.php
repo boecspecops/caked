@@ -120,6 +120,12 @@ class Task implements \ArrayAccess {
             $subtasks = glob($this->task->directory . $file_pattern);
         }
         
+        foreach($subtasks as $key => $subtask) {
+            if(strpos($subtask, $this->task->directory)) {
+                $subtasks[$key] = substr( $subtask, strlen($this->task->directory));
+            }
+        }
+        
         return Subtask::addSubtask($this->task->task_id, $subtasks);
     }
             
