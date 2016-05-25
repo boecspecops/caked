@@ -45,7 +45,7 @@ class DropboxAdapter implements AdapterInterface {
             $file_name = basename($localfile);
         }
         
-        $path = $this->config['directory']['root'];
+        $path = $this->config['directory'];
         
         $f = fopen($localfile, "rb");
         switch($this->config["mode"]) {
