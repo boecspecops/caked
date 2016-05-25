@@ -8,7 +8,6 @@
 
 namespace CakeD\Core;
 use Cake\ORM\TableRegistry;
-use CakeD\Core\Transfer\Configs\DefaultConfig;
 use CakeD\Core\Exceptions;
 
 /**
@@ -19,13 +18,13 @@ use CakeD\Core\Exceptions;
 
 
 class SubtaskStatus {
-    const WAIT          = 1;
-    const QUEUE         = 2;
-    const TRANSFER      = 3;
-    const PAUSED        = 4;
-    const COMPLETE      = 5;
-    const ERROR         = 6;
-    const NOT_EXIST     = 7;
+    const WAIT          = "WAIT";
+    const QUEUE         = "QUEUE";
+    const TRANSFER      = "TRANSFER";
+    const PAUSED        = "PAUSED";
+    const COMPLETE      = "COMPLETE";
+    const ERROR         = "ERROR";
+    const NOT_EXIST     = "NOT_EXIST";
 }
 
 
@@ -34,9 +33,9 @@ class Subtask {
     private $task;
     
     /**
-     * Function returns CakePHP table object of subtasks.
+     * Alias for TableRegistry::get(..).
      * 
-     * @return type
+     * @return ORM/Table
      */    
     public static function getTable() {
         if(is_null(self::$table)) {
@@ -46,15 +45,15 @@ class Subtask {
     }
     
     /**
-     * This function returns subtasks of task with id = tID.
+     * This function returns subtasks of task with id = task_id.
      * 
-     * @param type $tID
+     * @param type $taskID
      * @return \CakeD\Core\Subtask
      */    
-    public static function getSubtasks($tID) {
+    public static function getSubtasks($taskID) {
         $query = self::getTable()->find();
         $ent_subtasks = $query->select()
-            ->where(['tID' => $tID])
+            ->where(['task_id' => $taskID])
             ->andWhere(function ($exp) {
             return $exp
                 ->notEq('status', SubtaskStatus::COMPLETE);
@@ -82,21 +81,21 @@ class Subtask {
     /**
      * This function adds new subtask.
      * 
-     * @param type $tID
+     * @param type $taskID
      * @param type $files
      * 
      * returns int | array (when multiple files found by pattern | null (when no files found by pattern)
      */    
-    public static function addSubtask($tID, $files){
+    public static function addSubtask($taskID, $files){
         if(is_array($files)) {
             $subtasks = [];
             foreach ($files as $file ) {
-                array_push($subtasks, self::addSubtask($tID, $file));
+                array_push($subtasks, self::addSubtask($taskID, $file));
             }
             return $subtasks;
         } else if($files !== NULL) {
             $ent_subtask = self::getTable()->newEntity();
-            $ent_subtask->tID  = $tID;
+            $ent_subtask->task_id  = $taskID;
             $ent_subtask->file = $files;
             $ent_subtask->status = SubtaskStatus::WAIT;
 
@@ -119,32 +118,27 @@ class Subtask {
      * @param type $fs_adapter
      */
     
-    public function execute($fs_adapter) {
+    public function execute($fs_adapter, $directory) {
         $this->setStatus(SubtaskStatus::QUEUE);
-        
-        if(!file_exists($this->task->file)) {
-            $this->setStatus(SubtaskStatus::NOT_EXIST);
-            return false;
-        } else {
-            try {
-                $this->setStatus(SubtaskStatus::TRANSFER);
-                $fs_adapter->write($this->task->file);
-                
-                $this->task->error = null;
-                $this->setStatus(SubtaskStatus::COMPLETE);
-                return true;
-            }
-            catch(Exceptions\RemoteException $e) {
-                $this->task->error = $e->getMessage();
-                $this->setStatus(SubtaskStatus::ERROR);
-                return false;
-            }
-            catch(Exceptions\ConnectionReset $e) {
-                $this->task->error = $e->getMessage();
-                $this->setStatus(SubtaskStatus::ERROR);
-                return false;
-            }
+        try {
+            $this->setStatus(SubtaskStatus::TRANSFER);
+            $fs_adapter->write($directory, $this->task->file);
+
+            $this->task->error = null;
+            $this->setStatus(SubtaskStatus::COMPLETE);
+            return true;
         }
+        catch(Exceptions\RemoteException $e) {
+            $this->task->error = $e->getMessage();
+            $this->setStatus(SubtaskStatus::ERROR);
+            return false;
+        }
+        catch(Exceptions\ConnectionReset $e) {
+            $this->task->error = $e->getMessage();
+            $this->setStatus(SubtaskStatus::ERROR);
+            return false;
+        }
+        
     }    
     public function save() {
         self::getTable()->save($this->task);
@@ -153,5 +147,25 @@ class Subtask {
     public function setStatus($status) {
         $this->task->status = $status;
         $this->save();
+    }
+    
+    public function offsetSet($offset, $value) {
+        if (is_null($offset)) {
+            $this->task[] = $value;
+        } else {
+            $this->task[$offset] = $value;
+        }
+    }
+
+    public function offsetExists($offset) {
+        return isset($this->task[$offset]);
+    }
+
+    public function offsetUnset($offset) {
+        unset($this->task[$offset]);
+    }
+
+    public function offsetGet($offset) {
+        return isset($this->task[$offset]) ? $this->task[$offset] : null;
     }
 }

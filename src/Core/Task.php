@@ -5,39 +5,33 @@ namespace CakeD\Core;
 
 use Cake\ORM\TableRegistry;
 use CakeD\Core\Subtask;
-use CakeD\Core\Transfer\Configs\DefaultConfig;
+use CakeD\Core\Transfer\Adapters\DefaultAdapter;
 use CakeD\Core\Exceptions;
 use CakeD\Core\Core;
 
 class TaskStatus {
-    const WAIT          = 1;
-    const CONNECTING    = 2;
-    const ERROR         = 3;
-    const PROCESSING    = 4;
-    const COMPLETE      = 5;
-    const PAUSED        = 6;           
+    const WAIT          = "WAIT";
+    const CONNECTING    = "CONNECTING";
+    const ERROR         = "ERROR";
+    const PROCESSING    = "PROCESSING";
+    const COMPLETE      = "COMPLETE";
+    const PAUSED        = "PAUSED";
 }
 
 
-class Task {
-    
-    private static $table;
+class Task implements \ArrayAccess {
     private $fs_adapter = null;
     private $subtasks = [];
     private $task;
     
         
     /**
-     * Function returns CakePHP table object of tasks.
+     * Alias of TableRegister::get(..).
      * 
-     * @return type
+     * @return ORM/Table
      */    
     public static function getTable() {
-        if(is_null(self::$table))
-        {
-            self::$table = TableRegistry::get('cake_d_tasks');
-        }
-        return self::$table;        
+        return TableRegistry::get('cake_d_tasks');
     }
     
     
@@ -56,7 +50,7 @@ class Task {
      * 
      * @return type
      */
-    public static function getIncompletedTasks() {
+    public static function getIncompleted() {
         $query = self::getTable()->find();
         $query->select();
         return $query->where(function ($exp) {
@@ -71,37 +65,46 @@ class Task {
     
     
     public static function tick() {
-        $tasks = Task::getIncompletedTasks();
+        $stats = [];
+        $tasks = Task::getIncompleted();
         foreach($tasks as $task) {
-            if(self::countTasks() < Core::getConfig()['limitations']['max_tasks']) {
-                Task::init_and_execute($task);                
-            }
+            array_push($stats, Task::init_and_execute($task));
         }
+        
+        return $stats;
     }
     
     
     public static function init_and_execute($task_entity) {
         $task = new Task($task_entity);
-        $task->execute();
+        return $task->execute();
     }
     
     
-    public static function addTask($config, $exec_time = Null) {
+    public static function add($method, $directory, $exec_time = Null) {
         $ent_task = self::getTable()->newEntity();
         $ent_task->exec_time = is_null($exec_time) ? new \DateTime('now') : $exec_time;
         $ent_task->status = TaskStatus::WAIT;
-        $ent_task->config_file = $config;
+        $ent_task->method = $method;
+        $ent_task->directory = $directory;
         
-        $task = new Task($ent_task, $config);
+        $task = new Task($ent_task);
         $task->save();
         
         return $task;
     }
     
     
+    public static function getById($task_id) {
+        $query = self::getTable()->find();
+        $query->select();
+        return new Task(self::getTable()->get($task_id));
+    }
+    
+    
     public function __construct($task) {
         $this->task = $task;
-        $this->subtasks = Subtask::getSubtasks($this->task->tID);
+        $this->subtasks = Subtask::getSubtasks($this->task->task_id);
     }
     
     
@@ -109,31 +112,37 @@ class Task {
         $subtasks = [];
         if(is_array($file_pattern)) {
             foreach($file_pattern as $pattern) {
-                $files = glob($pattern);
+                $files = glob($this->task->directory . $pattern);
                 $subtasks = array_merge($subtasks, $files);
             }
         }
         else {
-            $subtasks = glob($file_pattern);
+            $subtasks = glob($this->task->directory . $file_pattern);
         }
         
-        return Subtask::addSubtask($this->task->tID, $subtasks);
+        foreach($subtasks as $key => $subtask) {
+            if(strpos($subtask, $this->task->directory) == 0) {
+                $subtasks[$key] = substr( $subtask, strlen($this->task->directory));
+            }
+        }
+        
+        return Subtask::addSubtask($this->task->task_id, $subtasks);
     }
             
     
     public function execute()
     {
-        $task_exec_status = true;
+        $statistics = ["subtasks" => count($this->subtasks), "success" => 0];
         try {
             $this->setStatus(TaskStatus::CONNECTING);
-            $this->fs_adapter = DefaultConfig::getAdapter($this->task->config_file);
+            $this->fs_adapter = DefaultAdapter::getAdapter($this->task->method);
             $this->setStatus(TaskStatus::PROCESSING);
             
             foreach($this->subtasks as $subtask) {
-                $subtask->execute($this->fs_adapter) ? : $task_exec_status = false;
+                !$subtask->execute($this->fs_adapter, $this->task->directory) ? : $statistics["success"]++;
             }
         
-            if($task_exec_status) {
+            if($statistics["success"] == $statistics["subtasks"]) {
                 $this->task->error = null;
                 $this->setStatus(TaskStatus::COMPLETE);
             } else {
@@ -152,9 +161,11 @@ class Task {
             $this->task->error = $e->getMessage();    
             $this->setStatus(TaskStatus::ERROR);
         }
-        finally {
-            unset($this->fs_adapter);
+        catch(Exceptions\ConfigParamNotFound $e) {
+            $this->task->error = $e->getMessage();    
+            $this->setStatus(TaskStatus::ERROR);
         }
+        return $statistics;
     }
     
     
@@ -167,5 +178,29 @@ class Task {
     
     public function save() {
         self::getTable()->save($this->task);
+    }
+    
+    public function offsetSet($offset, $value) {
+        if (is_null($offset)) {
+            $this->task[] = $value;
+        } else {
+            $this->task[$offset] = $value;
+        }
+    }
+
+    public function offsetExists($offset) {
+        return isset($this->task[$offset]);
+    }
+
+    public function offsetUnset($offset) {
+        unset($this->task[$offset]);
+    }
+
+    public function offsetGet($offset) {
+        if(strcmp($offset, "subtasks") == 0) {
+            return $this->subtasks;
+        } else {
+            return isset($this->task[$offset])? $this->task[$offset] : null;
+        }
     }
 }

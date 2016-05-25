@@ -2,7 +2,7 @@
 namespace CakeD\Core\Transfer\Adapters;
 
 use CakeD\Core\Exceptions;
-use CakeD\Core\Transfer\Configs\FTPConfig;
+use Cake\Core\Configure;
 
 /**
  * FTP adapter provides basic functionality to communicate with FTP servers.
@@ -13,9 +13,12 @@ class FTPAdapter implements AdapterInterface {
     private $instance;
     private $config = null;
     
-    public function __construct($config) {
-        $this->config = new FTPConfig($config);        
-        $this->instance = $this->config->getClient();
+    public function __construct() {
+        if($this->config === null) {
+            $this->config = Configure::load('CakeD.config')['FTP'];
+        }
+        
+        $this->instance = $this->getClient();
                 
         if(!$this->dir_exists($this->config['directory']['root']) &&
                 $this->config['directory']['create'])
@@ -26,19 +29,37 @@ class FTPAdapter implements AdapterInterface {
         $this->cd($this->config['directory']['root']);
     }
     
+    
+    public function getClient() {
+        $conn = $this->config['connection'];
+        
+        if($this->config['ssl']) {
+            $client = ftp_ssl_connect($conn['server'], $conn['port'], $conn['timeout']);
+        }
+        else {
+            $client  = ftp_connect($conn['server'], $conn['port'], $conn['timeout']);
+        }
+        
+        if($client == false) {
+            throw(new Exceptions\ConnectionReset("Can't connect to server."));
+        }
+        
+        if(!ftp_login($client, $conn['login'], $conn['password'])) {
+            throw(new Exceptions\RemoteAuthFailed(["adapter" => "FTP"]));
+        }
+        
+        return $client;
+    }
+    
     public function __destruct()
     {
         ftp_close( $this->instance );
     }
     
-    public function write($localfile, $file_name = Null) {        
-        if($file_name === Null) {
-            $file_name = basename($localfile);
-        }
-        
+    public function write($root, $localfile) {
         $filelist = ftp_nlist($this->instance, './');
         
-        if(in_array($file_name, $filelist) && !$this->config['rw'] )
+        if(in_array($localfile, $filelist) && !$this->config['rw'] )
         {
             throw(new Exceptions\RemoteException("[FTP] file writing failed. File alredy exists."));
         }    

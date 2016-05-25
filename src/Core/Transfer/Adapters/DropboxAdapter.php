@@ -2,8 +2,8 @@
 
 namespace CakeD\Core\Transfer\Adapters;
 use Dropbox as dbx;
-use CakeD\Core\Transfer\Configs\DropboxConfig;
 use CakeD\Core\Exceptions;
+use Cake\Core\Configure;
 
 /**
  * This adapter provides basic functionality to write files on dropbox servers
@@ -16,19 +16,36 @@ class DropboxAdapter implements AdapterInterface {
     private $instance;
     private $config = null;
     
-    public function __construct($config) {
-        $this->config = new DropboxConfig($config);
-        $this->instance = $this->config->getClient();
-    }
-    
-    public function write($localfile, $file_name = Null) {        
-        if($file_name === Null) {
-            $file_name = basename($localfile);
+    public function __construct() {
+        Configure::load('CakeD.config');
+        $this->config = Configure::read('DROPBOX');
+        
+        if($this->config['token'] === null) {
+            throw(new Exceptions\ConfigParamNotFound('Parameter token is null.'));
+        }
+        if($this->config['directory'] === null) {
+            $this->config['directory'] = '';
+        }
+        if($this->config['mode'] === null) {
+            $this->config['mode'] = 'rw';
         }
         
-        $path = $this->config['directory']['root'];
+        $this->instance = $this->getClient();
+    }
+       
+    public function getClient() {
+        $client = new dbx\Client($this->config['token'], $this->config['directory']);
         
-        $f = fopen($localfile, "rb");
+        return $client;
+    }
+    
+    public function write($root, $localfile) {
+        $f = fopen($root.$localfile, "rb");
+        
+        if(!$f) {
+            throw(new Exceptions\FileNotFound("[DROPBOX] File \"$root$localfile\" not found."));
+        }
+        
         switch($this->config["mode"]) {
             case "rw": {
                 $request = dbx\WriteMode::force();
@@ -39,8 +56,9 @@ class DropboxAdapter implements AdapterInterface {
                 break;
             }
         }
+        
         try{
-            $this->instance->uploadFile($path . $file_name, $request, $f);
+            $this->instance->uploadFile($this->config['directory'].$localfile, $request, $f);
         }
         catch(dbx\Exception_NetworkIO $e) {
             throw(new Exceptions\ConnectionReset($e->getMessage()));

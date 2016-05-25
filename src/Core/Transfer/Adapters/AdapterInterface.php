@@ -5,9 +5,11 @@ namespace CakeD\Core\Transfer\Adapters;
 
 interface AdapterInterface {
         
-    public function __construct($config);
+    public function __construct();
     
-    public function write($file, $path = null);
+    public function getClient();
+    
+    public function write($root, $file);
     
     public function is_dir($path);
     
