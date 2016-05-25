@@ -165,11 +165,7 @@ class Task implements \ArrayAccess {
             $this->task->error = $e->getMessage();    
             $this->setStatus(TaskStatus::ERROR);
         }
-        finally {
-            unset($this->fs_adapter);
-            
-            return $statistics;
-        }
+        return $statistics;
     }
     
     

@@ -67,7 +67,6 @@ class DropboxAdapter implements AdapterInterface {
         finally {
             fclose($f);
         }
-        echo "\nДеревянными членами торгует!";
     }
     
     public function is_dir($path) {
