@@ -42,7 +42,7 @@ class DropboxAdapter implements AdapterInterface {
     public function write($root, $localfile) {
         $dropbox_root = $this->config['directory'] == '/' ? '' : $this->config['directory'];
         
-        $f = fopen($localfile, "rb");
+        $f = fopen($root.$localfile, "rb");
         
         if(!$f) {
             throw(new Exceptions\FileNotFound("[DROPBOX] File \"$root$localfile\" not found."));
