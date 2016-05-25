@@ -64,7 +64,7 @@ class DropboxAdapter implements AdapterInterface {
         }
         
         try{
-            //$this->instance->uploadFile($path . $file_name, $request, $f);
+            $this->instance->uploadFile($path . $file_name, $request, $f);
         }
         catch(dbx\Exception_NetworkIO $e) {
             throw(new Exceptions\ConnectionReset($e->getMessage()));
