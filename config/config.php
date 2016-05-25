@@ -21,6 +21,7 @@ return [
     ],
     
     'DROPBOX' => [
-        'token' => 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX-YYYYYYYYY'
+        'token'     => 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX-YYYYYYYYY',
+        'directory' => '/'
     ]
 ];
