@@ -27,7 +27,7 @@ class DropboxAdapter implements AdapterInterface {
         if($this->config['token'] === null) {
             throw(new Exceptions\ConfigParamNotFound('Parameter token is null.'));
         }
-        if($this->config['directory'] === null || strpos($this->config['directory'], '/') == 0) {
+        if($this->config['directory'] === null || $this->config['directory'] == '/') {
             $this->config['directory'] = '';
         }
         if($this->config['mode'] === null) {
