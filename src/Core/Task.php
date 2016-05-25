@@ -143,7 +143,7 @@ class Task implements \ArrayAccess {
                 !$subtask->execute($this->fs_adapter) ? : $statistics["completed"]++;
             }
         
-            if($statistics["completed"] == $statistics["subtasks"]) {
+            if($statistics["success"] == $statistics["subtasks"]) {
                 $this->task->error = null;
                 $this->setStatus(TaskStatus::COMPLETE);
             } else {
