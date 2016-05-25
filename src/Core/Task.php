@@ -121,6 +121,7 @@ class Task implements \ArrayAccess {
         }
         
         foreach($subtasks as $key => $subtask) {
+            echo strpos($subtask, $this->task->directory) . '\n';
             if(strpos($subtask, $this->task->directory)) {
                 $subtasks[$key] = substr( $subtask, strlen($this->task->directory));
                 echo $subtasks[$key];
