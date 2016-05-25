@@ -23,7 +23,13 @@ class DropboxAdapter implements AdapterInterface {
     }
        
     public function getClient() {
-        $connection = $this->config['token'];
+        if($this->config['token'] === null) {
+            throw(new Exceptions\ConfigParamNotFound('Parameter token is null.'));
+        }
+        if($this->config['directory'] === null) {
+            $this->config['directory'] = '/';
+        }
+        
         if($connection !== null) {
             $client = new dbx\Client($connection, $this->config['directory']);
         } else {
