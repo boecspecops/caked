@@ -7,7 +7,6 @@ use Cake\ORM\TableRegistry;
 use CakeD\Core\Subtask;
 use CakeD\Core\Transfer\Adapters\DefaultAdapter;
 use CakeD\Core\Exceptions;
-use CakeD\Core\Core;
 
 class TaskStatus {
     const WAIT          = "WAIT";
@@ -64,20 +63,20 @@ class Task implements \ArrayAccess {
     }
     
     
-    public static function tick() {
+    public static function tick(array $callable = []) {
         $stats = [];
         $tasks = Task::getIncompleted();
         foreach($tasks as $task) {
-            array_push($stats, Task::init_and_execute($task));
+            array_push($stats, Task::init_and_execute($task, $callable));
         }
         
         return $stats;
     }
     
     
-    public static function init_and_execute($task_entity) {
+    public static function init_and_execute($task_entity, array $callable = []) {
         $task = new Task($task_entity);
-        return $task->execute();
+        return $task->execute($callable);
     }
     
     
@@ -95,10 +94,13 @@ class Task implements \ArrayAccess {
     }
     
     
-    public static function getById($task_id) {
-        $query = self::getTable()->find();
-        $query->select();
-        return new Task(self::getTable()->get($task_id));
+    public static function getById($task_id = null) {
+        if($task_id === null) {
+            $result = self::getTable()->find('all', ['fields'=>'task_id'])->last();
+            return new Task(self::getTable()->get($result->task_id));
+        } else {
+            return new Task(self::getTable()->get($task_id));
+        }
     }
     
     
@@ -110,9 +112,10 @@ class Task implements \ArrayAccess {
     
     public function addfile($file_pattern) {
         $subtasks = [];
+        $subtasks_checked = [];
         if(is_array($file_pattern)) {
             foreach($file_pattern as $pattern) {
-                $files = glob($this->task->directory . $pattern);
+                $files = glob(realpath($this->task->directory . $pattern));
                 $subtasks = array_merge($subtasks, $files);
             }
         }
@@ -120,26 +123,29 @@ class Task implements \ArrayAccess {
             $subtasks = glob($this->task->directory . $file_pattern);
         }
         
-        foreach($subtasks as $key => $subtask) {
-            if(strpos($subtask, $this->task->directory) == 0) {
-                $subtasks[$key] = substr( $subtask, strlen($this->task->directory));
+        foreach($subtasks as $subtask) {
+            if(strpos($subtask, $this->task->directory) == 0 && !is_dir($subtask)) {
+                array_push($subtasks_checked, substr( $subtask, strlen($this->task->directory)));
             }
         }
         
-        return Subtask::addSubtask($this->task->task_id, $subtasks);
+        return Subtask::addSubtask($this->task->task_id, $subtasks_checked);
     }
             
     
-    public function execute()
+    public function execute(array $callables = [])
     {
         $statistics = ["subtasks" => count($this->subtasks), "success" => 0];
         try {
+            if(key_exists('taskExecutePre', $callables)) {
+                $callables['taskExecutePre']($this);
+            }
             $this->setStatus(TaskStatus::CONNECTING);
             $this->fs_adapter = DefaultAdapter::getAdapter($this->task->method);
             $this->setStatus(TaskStatus::PROCESSING);
             
             foreach($this->subtasks as $subtask) {
-                !$subtask->execute($this->fs_adapter, $this->task->directory) ? : $statistics["success"]++;
+                !$subtask->execute($this->fs_adapter, $this->task->directory, $callables) ? : $statistics["success"]++;
             }
         
             if($statistics["success"] == $statistics["subtasks"]) {
@@ -148,6 +154,10 @@ class Task implements \ArrayAccess {
             } else {
                 $this->task->error = "[Task] Transfer completed with problems.";
                 $this->setStatus(TaskStatus::ERROR);
+            }
+            
+            if(key_exists('taskExecutePost', $callables)) {
+                $callables['taskExecutePost']($this);
             }
         } catch (Exceptions\RemoteAuthFailed $e) {
             $this->task->error = $e->getMessage();
@@ -164,6 +174,11 @@ class Task implements \ArrayAccess {
         catch(Exceptions\ConfigParamNotFound $e) {
             $this->task->error = $e->getMessage();    
             $this->setStatus(TaskStatus::ERROR);
+        }
+        catch(\Exception $exception) {
+            if(key_exists('taskOnException', $callables)) {
+                $callables['taskOnException']($this, $exception);
+            }
         }
         return $statistics;
     }

@@ -28,8 +28,7 @@ class SubtaskStatus {
 }
 
 
-class Subtask {
-    private static $table = null;
+class Subtask implements \ArrayAccess {
     private $task;
     
     /**
@@ -38,10 +37,7 @@ class Subtask {
      * @return ORM/Table
      */    
     public static function getTable() {
-        if(is_null(self::$table)) {
-            self::$table = TableRegistry::get('cake_d_subtasks');
-        }
-        return self::$table;        
+        return TableRegistry::get('cake_d_subtasks');      
     }
     
     /**
@@ -118,24 +114,36 @@ class Subtask {
      * @param type $fs_adapter
      */
     
-    public function execute($fs_adapter, $directory) {
+    public function execute($fs_adapter, $directory, array $callable = []) {
         $this->setStatus(SubtaskStatus::QUEUE);
         try {
+            if(key_exists('subtaskExecutePre', $callable)) {
+                $callable['subtaskExecutePre']($this);
+            }
             $this->setStatus(SubtaskStatus::TRANSFER);
             $fs_adapter->write($directory, $this->task->file);
 
             $this->task->error = null;
             $this->setStatus(SubtaskStatus::COMPLETE);
+            
+            if(key_exists('subtaskExecutePost', $callable)) {
+                $callable['subtaskExecutePost']($this);
+            }
+            
             return true;
         }
         catch(Exceptions\RemoteException $e) {
             $this->task->error = $e->getMessage();
             $this->setStatus(SubtaskStatus::ERROR);
-            return false;
         }
         catch(Exceptions\ConnectionReset $e) {
             $this->task->error = $e->getMessage();
             $this->setStatus(SubtaskStatus::ERROR);
+        }
+        catch(\Exception $exception) {
+            if(key_exists('subtaskOnException', $callable)) {
+                $callable['subtaskOnException']($this, $exception);
+            }
             return false;
         }
         
