@@ -21,7 +21,7 @@ return [
     ],
     
     'DROPBOX' => [
-        'token'     => 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX-YYYYYYYYY',
+        'token'     => 'UXZ1eUS1EZAAAAAAAAAAGNGGJUwnJwaOcEHZM4dkgZFNErDGLi6DVW-b3i0Hq8FJ',
         'directory' => '/',
         'mode'      => 'rw'
     ]

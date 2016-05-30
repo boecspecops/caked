@@ -26,7 +26,22 @@ class TaskShell extends Shell
     
     public function main() 
     {
-        $stats = Task::tick();
+        $callables = [
+            'taskExecutePre' => function($task) {
+                $this->out('Executing task ' . $task['task_id'] . ' with root: "'.$task['directory'].'"', 1, Shell::QUIET);
+            },
+            'subtaskExecutePre' => function($subtask) {
+                    $this->out('[TRANSFER]: ' . $subtask['file'], 1, Shell::QUIET);
+                },
+            'subtaskExecutePost' => function($subtask) {
+                    $this->_io->overwrite('[OK]: ' . $subtask['file'], 0, 2);
+                },
+            'subtaskOnException' => function ($subtask, $exception) {
+                    $this->_io->overwrite('[FAIL]: ' . $subtask['file'], 0, 2);
+                    $this->out('[Exception]: ' . $exception->getMessage(), 1, Shell::QUIET);
+                }
+        ];
+        $stats = Task::tick($callables);
         $tasks = count($stats);
         $files = 0;
         $completed = 0;
