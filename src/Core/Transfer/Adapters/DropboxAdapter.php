@@ -75,4 +75,16 @@ class DropboxAdapter implements AdapterInterface {
     public function dir_exists($path) {
         
     }
+    
+    public function getUrlBase($path) {
+        try {
+            $file = $this->config['directory'] . $path;
+            $client = $this->getClient();
+            $url = $client->createShareableLink($file);
+            $url = str_replace('dl=0', 'dl=1', $url);
+        } catch(Dropbox\Exception_ServerError $e) {
+            throw(new Exceptions\RemoteException(['exception'=>$e]));
+        }
+        return $url;
+    }
 }

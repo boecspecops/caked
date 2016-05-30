@@ -129,4 +129,12 @@ class FTPAdapter implements AdapterInterface {
         
         return $result;
     }
+    
+       public function getUrlBase($path) {
+        $url =  'ftp://' . $this->config['connection']['server'] .
+                ':' . $this->config['connection']['port'] .
+                $this->config['directory']['root'] . $path;
+        
+        return $url;
+    }
 }

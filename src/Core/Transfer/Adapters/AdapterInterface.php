@@ -14,4 +14,6 @@ interface AdapterInterface {
     public function is_dir($path);
     
     public function dir_exists($path);
+    
+    public function getUrlBase($path);
 }
