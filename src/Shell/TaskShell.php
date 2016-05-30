@@ -58,11 +58,11 @@ class TaskShell extends Shell
     public function help() {
         $this->out('Methods of Task: ', 1, Shell::QUIET);
         $this->out('add "<directory>" ["<method>" ["<datetime>"]] - create new task. ', 1, Shell::QUIET);
-        $this->out('      directory - place, where files can be found.\n'
-                .  '      method    - which service use to store files.\n'
+        $this->out('      directory - place, where files can be found.' . $this->nl(1)
+                .  '      method    - which service use to store files.' . $this->nl(1)
                 .  '      datetime  - execute task after this date/time. ', 1, Shell::QUIET);
-        $this->out('addfiles <task_id> "<pattern>" - add files to task.\n'
-                .  '      task_id - id of created task.\n'
+        $this->out('addfiles <task_id> "<pattern>" - add files to task.' . $this->nl(1)
+                .  '      task_id - id of created task.' . $this->nl(1)
                 .  '      pattern - add files, that can be found by pattern.', 1, Shell::QUIET);
         $this->out('addfile <task_id> "<pattern>" - same as addfiles.', 1, Shell::QUIET);
     }
