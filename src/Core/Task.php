@@ -95,10 +95,13 @@ class Task implements \ArrayAccess {
     }
     
     
-    public static function getById($task_id) {
-        $query = self::getTable()->find();
-        $query->select();
-        return new Task(self::getTable()->get($task_id));
+    public static function getById($task_id = null) {
+        if($task_id === null) {
+            $result = $this->ModelName->find('all', ['fields'=>'task_id'])->last();
+            return new Task(self::getTable()->get($result->task_id));
+        } else {
+            return new Task(self::getTable()->get($task_id));
+        }
     }
     
     

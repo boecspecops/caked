@@ -46,12 +46,19 @@ class TaskShell extends Shell
         $this->out('Created new task with id: ' . $task["task_id"], 1, Shell::QUIET);
     }
     
-    public function addfiles($task_id, $pattern) {
-        $this->addfile($task_id, $pattern);
+    public function addfiles($param1, $param2 = null) {
+        $this->addfile($param1, $param2);
     }
     
-    public function addfile($task_id, $pattern) {
-        $task = Task::getById($task_id);
+    public function addfile($param1, $param2 = null) {
+        if(is_string($param1) && $param2 === null) {
+            $task = Task::getById();
+            $pattern = $param1;
+        } else {
+            $task = Task::getById($param1);
+            $pattern = $param2;
+        }
+        
         $this->out('Files added: ' . count($task->addfile($pattern)), 1, Shell::QUIET);
     }
     
