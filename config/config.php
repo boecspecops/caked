@@ -22,6 +22,7 @@ return [
     
     'DROPBOX' => [
         'token'     => 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX-YYYYYYYYY',
-        'directory' => '/'
+        'directory' => '/',
+        'mode'      => 'rw'
     ]
 ];

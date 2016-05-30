@@ -39,7 +39,7 @@ class TaskShell extends Shell
         $this->out('Tasks executed: ' . $tasks . '; Files sent: ' . $completed . '/' . $files, 1, Shell::QUIET);
     }
     
-    public function add( $directory = null, $method = "DROPBOX", $exec_time = null) {
+    public function add( $directory, $method = "DROPBOX", $exec_time = null) {
         $exec_time === null ? : $exec_time = new \DateTime($exec_time);
         $task = Task::add($method, $directory, $exec_time);
         $this->out("Creating task with root directory: $directory. Method: $method", 1, Shell::QUIET);
@@ -53,5 +53,17 @@ class TaskShell extends Shell
     public function addfile($task_id, $pattern) {
         $task = Task::getById($task_id);
         $this->out('Files added: ' . count($task->addfile($pattern)), 1, Shell::QUIET);
+    }
+    
+    public function help() {
+        $this->out('Methods of Task: ', 1, Shell::QUIET);
+        $this->out('add "<directory>" ["<method>" ["<datetime>"]] - create new task. ', 1, Shell::QUIET);
+        $this->out('      directory - place, where files can be found.'
+                .  '      method    - which service use to store files.'
+                .  '      datetime  - execute task after this date/time. ', 1, Shell::QUIET);
+        $this->out('addfiles <task_id> "<pattern>" - add files to task.'
+                .  '      task_id - id of created task.'
+                .  '      pattern - add files, that can be found by pattern.', 1, Shell::QUIET);
+        $this->out('addfile <task_id> "<pattern>" - same as addfiles.', 1, Shell::QUIET);
     }
 }
