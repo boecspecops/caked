@@ -10,7 +10,7 @@ CakeD - плагин, предназначенный для запланиров
 "repositories": [
     {
         "type": "vcs",
-        "url": "https://github.com/boecspecops/caked"
+        "url": "https://github.com/denvolj/caked"
     }
 ],
 "require": {
