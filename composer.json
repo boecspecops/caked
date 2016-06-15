@@ -1,12 +1,12 @@
 {
     "name": "denvolj/caked",
-    "authors": {
-        [
+    "authors": [
+        {
             "name": "Denis Volzhankin",
             "email": "boecspecops@mail.ru",
             "role": "Developer"
-        ]
-    },
+        }
+    ],
     "version": "0.3",
     "homepage": "https://github.com/boecspecops/caked",
     "description": "CakeD plugin for CakePHP",
