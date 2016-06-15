@@ -1,9 +1,11 @@
 {
     "name": "denvolj/caked",
     "authors": {
-        "name": "Denis Volzhankin",
-        "email": "boecspecops@mail.ru",
-        "role": "Developer"
+        [
+            "name": "Denis Volzhankin",
+            "email": "boecspecops@mail.ru",
+            "role": "Developer"
+        ]
     },
     "version": "0.3",
     "homepage": "https://github.com/boecspecops/caked",
