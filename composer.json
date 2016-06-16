@@ -7,12 +7,12 @@
             "role": "Developer"
         }
     ],
-    "version": "0.3.0-stable",
+    "version": "1.0.0",
     "homepage": "https://github.com/boecspecops/caked",
     "description": "CakeD plugin for CakePHP",
     "type": "cakephp-plugin",
     "require": {
-        "dropbox/dropbox-sdk": "1.1.*-stable"
+        "dropbox/dropbox-sdk": "1.1.6"
     },
     "autoload": {
         "psr-4": {
