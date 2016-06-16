@@ -12,6 +12,11 @@
     "homepage": "https://github.com/boecspecops/caked",
     "description": "CakeD plugin for CakePHP",
     "type": "cakephp-plugin",
+    "extra": {
+        "installer-paths": {
+          "app/Plugin/CakeD": ["denvolj/caked"],
+        }
+    },
     "require": {
         "dropbox/dropbox-sdk": "1.1.6"
     },
