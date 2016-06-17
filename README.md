@@ -25,7 +25,8 @@ bin/cake CakeD.Task add "/home/user/" "DROPBOX" "11:30 10.07.2016"
 bin/cake CakeD.Task addfile <task_id> "<file_path_mask>"
 
 // Пример:
-bin/cake CakeD.Task add "Downloads/*" // Добавит все файлы, содержащиеся в папке /home/user/Downloads.
+bin/cake CakeD.Task add "Downloads/*" // Добавит все файлы, содержащиеся в папке "/home/user/Downloads".
+					 Файлы добавляются к последней задаче, если task_id не указан.
 ```
 
 - Исполнение задач:
