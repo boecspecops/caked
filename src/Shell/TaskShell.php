@@ -26,18 +26,19 @@ class TaskShell extends Shell
     
     public function main() 
     {
+        $last_msg = '';
         $callables = [
             'taskExecutePre' => function($task) {
                 $this->out('Executing task ' . $task['task_id'] . ' with root: "'.$task['directory'].'"', 1, Shell::QUIET);
             },
             'subtaskExecutePre' => function($subtask) {
-                    $this->out('[TRANSFER]: ' . $subtask['file'], 1, Shell::QUIET);
+                    $this->out('[TRANSFER]: ' . $subtask['file'], 0, Shell::QUIET);
                 },
             'subtaskExecutePost' => function($subtask) {
-                    $this->_io->overwrite('[OK]: ' . $subtask['file'], 0, 2);
+                    $this->_io->overwrite('[OK]: ' . $subtask['file'], 1);
                 },
             'subtaskOnException' => function ($subtask, $exception) {
-                    $this->_io->overwrite('[FAIL]: ' . $subtask['file'], 0, 2);
+                    $this->_io->overwrite('[FAIL]: ' . $subtask['file'], 1);
                     $this->out('[Exception]: ' . $exception->getMessage(), 1, Shell::QUIET);
                 }
         ];
@@ -87,5 +88,10 @@ class TaskShell extends Shell
                 .  '      task_id - id of created task.' . $this->nl(1)
                 .  '      pattern - add files, that can be found by pattern.', 1, Shell::QUIET);
         $this->out('addfile <task_id> "<pattern>" - same as addfiles.', 1, Shell::QUIET);
+    }
+    
+    public function url($path) {
+        $this->out('Generating link... ', 0, Shell::QUIET);
+        $this->_io->overwrite('Generated link: ' . Task::getUrlBase($path), 1);
     }
 }

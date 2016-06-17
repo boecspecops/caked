@@ -104,6 +104,25 @@ class Task implements \ArrayAccess {
     }
     
     
+    public static function getUrlBase($path) {
+        $query = Subtask::getTable()->find();
+        $result = $query->select(['task_id', 'file', 'status'])
+            ->where(['file' => $path])
+            ->order(['subtask_id' => 'DESC'])->first();
+        
+        $query = self::getTable()->find();
+        $task_data = $query->select(['method', 'directory'])
+            ->where(['task_id' => $result->task_id])->first();
+        
+        if($result->status == SubtaskStatus::COMPLETE) {
+            $adapter = DefaultAdapter::getAdapter($task_data->method);
+            return $adapter->getUrlBase($path);
+        } else {
+            return $task_data->directory . $result->file;
+        }
+    }
+    
+    
     public function __construct($task) {
         $this->task = $task;
         $this->subtasks = Subtask::getSubtasks($this->task->task_id);
