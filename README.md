@@ -4,24 +4,45 @@ CakeD - плагин, предназначенный для запланиров
 
 ### Установка
 Установка через composer:
-- Добавить в `Composer.json` следующие строки
-
+- Из корневого каталога проекта выполнить в командной строке:
 ```
-"repositories": [
-    {
-        "type": "vcs",
-        "url": "https://github.com/denvolj/caked"
-    }
-],
-"require": {
-	"caked": "dev-master"
-}
+php composer.phar require denvolj/caked<br>
+bin/cake plugin load denvolj/caked
 ```
-- Из корневого каталога проекта выполнить в командной строке `php composer.phar update`
 - Для миграции таблиц, из корневого каталога выполнить `bin/cake migrations migrate -p CakeD`
 
-### Компоненты плагина
-#### TaskManager
+### Эксплуатация
+#### Оболочка TaskShell
+- Создание задачи:
+```
+bin/cake CakeD.Task add "<path_to_directory>" "<METHOD>" "<hh:mm dd.mm.yyyy>"
+
+// Пример:
+bin/cake CakeD.Task add "/home/user/" "DROPBOX" "11:30 10.07.2016"
+```
+- Добавление файлов к задаче:
+```
+bin/cake CakeD.Task addfile <task_id> "<file_path_mask>"
+
+// Пример:
+bin/cake CakeD.Task add "Downloads/*" // Добавит все файлы, содержащиеся в папке /home/user/Downloads.
+```
+
+- Исполнение задач:
+```
+bin/cake CakeD.Task
+```
+
+- Получение ссылки на файл:
+```
+bin/cake CakeD.Task url "<file_name>"
+
+// Пример:
+bin/cake CakeD.Task url "index.html" // Возвращает ссылку на файл с сервиса,
+					Либо возвращает путь: "/home/user/Downloads/index.html"
+```
+
+#### Компонента плагина TaskManager
 ##### Описание
 Данная компонента предоставляет API для планирования, конфигурирования задач, а так же, добавления файлов к задачам.
 
