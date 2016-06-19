@@ -26,6 +26,10 @@ class TaskShell extends Shell
     
     public function main() 
     {
+        $this->help();
+    }
+    
+    public function exec() {
         $last_msg = '';
         $callables = [
             'taskExecutePre' => function($task) {
@@ -85,12 +89,14 @@ class TaskShell extends Shell
                 .  '      method    - which service use to store files.' . $this->nl(1)
                 .  '      datetime  - execute task after this date/time. ', 1, Shell::QUIET);
         $this->out('addfiles <task_id> "<pattern>" - add files to task.' . $this->nl(1)
-                .  '      task_id - id of created task.' . $this->nl(1)
-                .  '      pattern - add files, that can be found by pattern.', 1, Shell::QUIET);
+                .  '      task_id   - id of created task.' . $this->nl(1)
+                .  '      pattern   - add files, that can be found by pattern.', 1, Shell::QUIET);
         $this->out('addfile <task_id> "<pattern>" - same as addfiles.', 1, Shell::QUIET);
+        $this->out('geturl "<path>" - get link to file.', 1, Shell::QUIET);
+        $this->out('exec - analyse and execute tasks.', 1, Shell::QUIET);
     }
     
-    public function url($path) {
+    public function geturl($path) {
         $this->out('Generating link... ', 0, Shell::QUIET);
         $this->_io->overwrite('Generated link: ' . Task::getUrlBase($path), 1);
     }

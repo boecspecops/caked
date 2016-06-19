@@ -82,7 +82,15 @@ class Task implements \ArrayAccess {
     
     public static function add($method, $directory, $exec_time = Null) {
         $ent_task = self::getTable()->newEntity();
-        $ent_task->exec_time = is_null($exec_time) ? new \DateTime('now') : $exec_time;
+        if(is_null($exec_time)) {
+            new \DateTime('now');
+        } else {
+            if(!is_string($exec_time)) {
+                $ent_task->exec_time = $exec_time;
+            } else {
+                \DateTime::createFromFormat('HH:ii d-m-Y', $exec_time);
+            }
+        }
         $ent_task->status = TaskStatus::WAIT;
         $ent_task->method = $method;
         $ent_task->directory = $directory;
@@ -110,15 +118,19 @@ class Task implements \ArrayAccess {
             ->where(['file' => $path])
             ->order(['subtask_id' => 'DESC'])->first();
         
-        $query = self::getTable()->find();
-        $task_data = $query->select(['method', 'directory'])
-            ->where(['task_id' => $result->task_id])->first();
-        
-        if($result->status == SubtaskStatus::COMPLETE) {
-            $adapter = DefaultAdapter::getAdapter($task_data->method);
-            return $adapter->getUrlBase($path);
+        if(!is_null($result)) {
+            $query = self::getTable()->find();
+            $task_data = $query->select(['method', 'directory'])
+                ->where(['task_id' => $result->task_id])->first();
+
+            if($result->status == SubtaskStatus::COMPLETE) {
+                $adapter = DefaultAdapter::getAdapter($task_data->method);
+                return $adapter->getUrlBase($path);
+            } else {
+                return $task_data->directory . $result->file;
+            }
         } else {
-            return $task_data->directory . $result->file;
+            return $path;
         }
     }
     
